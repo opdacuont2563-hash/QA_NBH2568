@@ -1720,6 +1720,12 @@
     });
 
     function saveData() {
+      // Ensure the user is authenticated before attempting to save
+      if (!currentUser || !currentUser.id) {
+        showAlert('กรุณาเข้าสู่ระบบก่อนบันทึกข้อมูล', 'error');
+        return;
+      }
+
       if (!validateForm()) {
         return;
       }
@@ -1816,26 +1822,33 @@
         note: document.getElementById('note').value || ''
       };
 
-      google.script.run
-        .withSuccessHandler(function(response) {
-          hideLoading();
-          if (response.success) {
-            showAlert('บันทึกข้อมูลสำเร็จ!', 'success');
-            // Clear form after successful save
-            setTimeout(() => {
-              clearForm();
-              showAlert('พร้อมบันทึกข้อมูลใหม่', 'success');
-            }, 1500);
-          } else {
-            showAlert('เกิดข้อผิดพลาด: ' + response.message, 'error');
-          }
-        })
-        .withFailureHandler(function(error) {
-          hideLoading();
-          showAlert('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
-          console.error(error);
-        })
-        .saveQAData(data);
+      try {
+        google.script.run
+          .withSuccessHandler(function(response) {
+            hideLoading();
+            if (response.success) {
+              showAlert('บันทึกข้อมูลสำเร็จ!', 'success');
+              // Clear form after successful save
+              setTimeout(() => {
+                clearForm();
+                showAlert('พร้อมบันทึกข้อมูลใหม่', 'success');
+              }, 1500);
+            } else {
+              showAlert('เกิดข้อผิดพลาด: ' + response.message, 'error');
+            }
+          })
+          .withFailureHandler(function(error) {
+            hideLoading();
+            showAlert('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+            console.error(error);
+          })
+          .saveQAData(data);
+      } catch (error) {
+        // Handle unexpected errors (e.g., google.script.run unavailable) to avoid stuck loading overlay
+        hideLoading();
+        console.error('Unexpected error while saving data:', error);
+        showAlert('ไม่สามารถเชื่อมต่อเพื่อบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง', 'error');
+      }
     }
 
     function loadDataForPeriod() {
