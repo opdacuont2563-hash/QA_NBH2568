@@ -62,16 +62,21 @@ function initializeSheet() {
       // Section 7: SOS Scores (5 fields)
       's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
       
-      // Section 8: Pain Management (10 fields)
-      's9_1_1', 's9_1_2', 'painTotal',
-      's9_2_1', 's9_2_2', 's9_2_3',
-      's9_3_1', 's9_3_2', 'recordCompleteness',
+      // Section 8: SOS Scores (5 fields)
+      's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
 
-      // Section 9: ICU-specific metrics
+      // Section 9: Unplanned return to ICU (ICU only)
       'icu_unplannedReturn3Days',
+
+      // Section 10: Unplan ICU breakdown (ICU only)
       'icu_unplan_med_male', 'icu_unplan_med_female',
       'icu_unplan_surg_male', 'icu_unplan_surg_female',
       'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro',
+
+      // Section 11: Pain Management (10 fields)
+      's9_1_1', 's9_1_2', 'painTotal',
+      's9_2_1', 's9_2_2', 's9_2_3',
+      's9_3_1', 's9_3_2', 'recordCompleteness',
 
       'หมายเหตุ'
     ];
@@ -99,9 +104,9 @@ function initializeSheet() {
       's5_1', 's6_1', 's6_2',
       's7_1', 's7_2', 's7_3',
       's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
-      's9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness',
       'icu_unplannedReturn3Days', 'icu_unplan_med_male', 'icu_unplan_med_female', 'icu_unplan_surg_male', 'icu_unplan_surg_female',
       'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro',
+      's9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness',
       'หมายเหตุ'
     ];
 
@@ -203,18 +208,18 @@ function saveQAData(data) {
       
       // Section 7
       data.s8_1 || '', data.s8_2 || '', data.s8_3 || '', data.s8_4 || '', data.s8_5 || '',
-      
-      // Section 8
-      data.s9_1_1 || '', data.s9_1_2 || '', data.painTotal || '',
-      data.s9_2_1 || '', data.s9_2_2 || '', data.s9_2_3 || '',
-      data.s9_3_1 || '', data.s9_3_2 || '', data.recordCompleteness || '',
 
-      // Section 9
+      // Section 8-10 (ICU specific)
       data.icu_unplannedReturn3Days || '',
       data.icu_unplan_med_male || '', data.icu_unplan_med_female || '',
       data.icu_unplan_surg_male || '', data.icu_unplan_surg_female || '',
       data.icu_unplan_ortho || '', data.icu_unplan_obgyne || '', data.icu_unplan_ped || '', data.icu_unplan_ent || '',
       data.icu_unplan_uro || '', data.icu_unplan_neuro || '',
+
+      // Section 11
+      data.s9_1_1 || '', data.s9_1_2 || '', data.painTotal || '',
+      data.s9_2_1 || '', data.s9_2_2 || '', data.s9_2_3 || '',
+      data.s9_3_1 || '', data.s9_3_2 || '', data.recordCompleteness || '',
 
       data.note || ''
     ];
@@ -288,18 +293,8 @@ function updateExistingRow(sheet, rowIndex, data) {
     section7.forEach(val => {
       sheet.getRange(rowIndex, colIndex++).setValue(val || '');
     });
-    
-    // Section 8 (9 fields)
-    const section8 = [
-      data.s9_1_1, data.s9_1_2, data.painTotal,
-      data.s9_2_1, data.s9_2_2, data.s9_2_3,
-      data.s9_3_1, data.s9_3_2, data.recordCompleteness
-    ];
-    section8.forEach(val => {
-      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
-    });
 
-    // Section 9 (ICU-specific)
+    // Section 8-10 (ICU-specific)
     const section9 = [
       data.icu_unplannedReturn3Days,
       data.icu_unplan_med_male, data.icu_unplan_med_female,
@@ -308,6 +303,16 @@ function updateExistingRow(sheet, rowIndex, data) {
       data.icu_unplan_uro, data.icu_unplan_neuro
     ];
     section9.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+
+    // Section 11 (Pain Management)
+    const section10 = [
+      data.s9_1_1, data.s9_1_2, data.painTotal,
+      data.s9_2_1, data.s9_2_2, data.s9_2_3,
+      data.s9_3_1, data.s9_3_2, data.recordCompleteness
+    ];
+    section10.forEach(val => {
       sheet.getRange(rowIndex, colIndex++).setValue(val || '');
     });
 
@@ -381,17 +386,17 @@ function getQAData(departmentId, fiscalYear, month) {
           // Section 7
           s8_1: data[i][40], s8_2: data[i][41], s8_3: data[i][42], s8_4: data[i][43], s8_5: data[i][44],
           
-          // Section 8
-          s9_1_1: data[i][45], s9_1_2: data[i][46], painTotal: data[i][47],
-          s9_2_1: data[i][48], s9_2_2: data[i][49], s9_2_3: data[i][50],
-          s9_3_1: data[i][51], s9_3_2: data[i][52], recordCompleteness: data[i][53],
+          // Section 8-10
+          icu_unplannedReturn3Days: data[i][45],
+          icu_unplan_med_male: data[i][46], icu_unplan_med_female: data[i][47],
+          icu_unplan_surg_male: data[i][48], icu_unplan_surg_female: data[i][49],
+          icu_unplan_ortho: data[i][50], icu_unplan_obgyne: data[i][51], icu_unplan_ped: data[i][52],
+          icu_unplan_ent: data[i][53], icu_unplan_uro: data[i][54], icu_unplan_neuro: data[i][55],
 
-          // Section 9
-          icu_unplannedReturn3Days: data[i][54],
-          icu_unplan_med_male: data[i][55], icu_unplan_med_female: data[i][56],
-          icu_unplan_surg_male: data[i][57], icu_unplan_surg_female: data[i][58],
-          icu_unplan_ortho: data[i][59], icu_unplan_obgyne: data[i][60], icu_unplan_ped: data[i][61],
-          icu_unplan_ent: data[i][62], icu_unplan_uro: data[i][63], icu_unplan_neuro: data[i][64],
+          // Section 11
+          s9_1_1: data[i][56], s9_1_2: data[i][57], painTotal: data[i][58],
+          s9_2_1: data[i][59], s9_2_2: data[i][60], s9_2_3: data[i][61],
+          s9_3_1: data[i][62], s9_3_2: data[i][63], recordCompleteness: data[i][64],
 
           note: data[i][65]
         };
@@ -485,17 +490,17 @@ function getYearData(departmentId, fiscalYear) {
           // Section 7
           s8_1: data[i][40], s8_2: data[i][41], s8_3: data[i][42], s8_4: data[i][43], s8_5: data[i][44],
           
-          // Section 8
-          s9_1_1: data[i][45], s9_1_2: data[i][46], painTotal: data[i][47],
-          s9_2_1: data[i][48], s9_2_2: data[i][49], s9_2_3: data[i][50],
-          s9_3_1: data[i][51], s9_3_2: data[i][52], recordCompleteness: data[i][53],
+          // Section 8-10
+          icu_unplannedReturn3Days: data[i][45],
+          icu_unplan_med_male: data[i][46], icu_unplan_med_female: data[i][47],
+          icu_unplan_surg_male: data[i][48], icu_unplan_surg_female: data[i][49],
+          icu_unplan_ortho: data[i][50], icu_unplan_obgyne: data[i][51], icu_unplan_ped: data[i][52],
+          icu_unplan_ent: data[i][53], icu_unplan_uro: data[i][54], icu_unplan_neuro: data[i][55],
 
-          // Section 9
-          icu_unplannedReturn3Days: data[i][54],
-          icu_unplan_med_male: data[i][55], icu_unplan_med_female: data[i][56],
-          icu_unplan_surg_male: data[i][57], icu_unplan_surg_female: data[i][58],
-          icu_unplan_ortho: data[i][59], icu_unplan_obgyne: data[i][60], icu_unplan_ped: data[i][61],
-          icu_unplan_ent: data[i][62], icu_unplan_uro: data[i][63], icu_unplan_neuro: data[i][64],
+          // Section 11
+          s9_1_1: data[i][56], s9_1_2: data[i][57], painTotal: data[i][58],
+          s9_2_1: data[i][59], s9_2_2: data[i][60], s9_2_3: data[i][61],
+          s9_3_1: data[i][62], s9_3_2: data[i][63], recordCompleteness: data[i][64],
 
           note: data[i][65]
         };

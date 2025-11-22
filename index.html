@@ -728,107 +728,13 @@
             </div>
           </div>
 
-          <!-- Section 8: Pain Management -->
-          <div class="section-card">
-            <h3 class="section-header">
-              <i class="fas fa-procedures mr-2 text-purple-600"></i>
-              9. การจัดการความปวด (Pain Management)
-            </h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  1.1 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวด (โดยการใช้ยา)
-                </label>
-                <input type="number" id="s9_1_1" step="0.01" oninput="calculatePainTotal()"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  1.2 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวด (โดยการไม่ใช้ยา)
-                </label>
-                <input type="number" id="s9_1_2" step="0.01" oninput="calculatePainTotal()"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-              
-              <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-blue-700 mb-2">
-                  <i class="fas fa-calculator mr-2"></i>Total (Auto-sum)
-                </label>
-                <input type="text" id="painTotal" readonly
-                  class="calculated-field w-full px-4 py-2 rounded-lg">
-                <div class="formula-box">
-                  <strong>สูตร:</strong> 1.1 + 1.2
-                </div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  2.1 Acute Pain
-                </label>
-                <input type="number" id="s9_2_1" step="0.01" 
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  2.2 Chronic Pain
-                </label>
-                <input type="number" id="s9_2_2" step="0.01" 
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  2.3 Palliative Care Pain Management
-                </label>
-                <input type="number" id="s9_2_3" step="0.01" 
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-            </div>
-
-            <div class="p-4 bg-green-50 rounded-lg">
-              <h4 class="font-bold text-gray-800 mb-4">3. ร้อยละความครบถ้วน (Completeness of Record)</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    3.1 จำนวนครั้งของผู้ป่วยที่มีการบันทึกการจัดการความปวดในเวชระเบียน
-                  </label>
-                  <input type="number" id="s9_3_1" step="0.01" oninput="calculateRecordCompleteness()"
-                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-                </div>
-                
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    3.2 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวดทั้งหมด
-                  </label>
-                  <input type="number" id="s9_3_2" step="0.01" oninput="calculateRecordCompleteness()"
-                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-                </div>
-                
-                <div class="md:col-span-2">
-                  <label class="block text-sm font-semibold text-blue-700 mb-2">
-                    <i class="fas fa-calculator mr-2"></i>ร้อยละความครบถ้วน (%) (Auto-calculated)
-                  </label>
-                  <input type="text" id="recordCompleteness" readonly
-                    class="calculated-field w-full px-4 py-2 rounded-lg">
-                  <div class="formula-box">
-                    <strong>สูตร:</strong> (3.1 / 3.2) × 100
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 10: ICU-specific metrics (appears after Pain Management) -->
+          <!-- Section 8: Pain Management (placeholder moved) -->
+          <!-- Section 9-10: ICU-specific metrics (appears after SOS) -->
           <div id="icuSection" class="section-card hidden">
             <div class="flex items-center justify-between mb-4">
               <h3 class="section-header mb-0">
                 <i class="fas fa-procedures mr-2 text-purple-600"></i>
-                10. ข้อมูลเฉพาะหอผู้ป่วยหนัก
+                9-10. ข้อมูลเฉพาะหอผู้ป่วยหนัก
               </h3>
               <span class="text-xs text-purple-700 bg-purple-50 px-3 py-1 rounded-full font-semibold">แสดงเฉพาะ ICU</span>
             </div>
@@ -853,56 +759,150 @@
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.3 ศัลยกรรมชาย (SUR ชาย) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.3 ศัลยกรรมชาย SUR - ราย</label>
                 <input type="number" id="icu_unplan_surg_male" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.4 ศัลยกรรมหญิง (SUR หญิง) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.4 ศัลยกรรมหญิง SUR - ราย</label>
                 <input type="number" id="icu_unplan_surg_female" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.5 กระดูกและข้อ (ORTHO) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.5 กระดูกและข้อ ทั้งชายและหญิง ORTHO - ราย</label>
                 <input type="number" id="icu_unplan_ortho" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.6 สูติกรรม-นรีเวช (OBGYNE) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.6 สูติกรรม-นรีเวช OBGYNE - ราย</label>
                 <input type="number" id="icu_unplan_obgyne" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.7 หอผู้ป่วยหนักกุมารเวช (PED) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.7 หอผู้ป่วยหนักกุมารเวช PED - ราย</label>
                 <input type="number" id="icu_unplan_ped" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.8 หอผู้ป่วยโสต ศอ นาสิก (ENT) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.8 หอผู้ป่วยโสต ศอ นาสิก ENT - ราย</label>
                 <input type="number" id="icu_unplan_ent" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.9 ศัลยกรรมระบบทางเดินปัสสาวะ (URO) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.9 ศัลยกรรมระบบทางเดินปัสสาวะ URO - ราย</label>
                 <input type="number" id="icu_unplan_uro" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
 
               <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.10 ศัลยกรรมระบบประสาทและสมอง (NEURO) - ราย</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.10 ศัลยกรรมระบบประสาทและสมอง NEURO - ราย</label>
                 <input type="number" id="icu_unplan_neuro" step="1"
                   class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
               </div>
             </div>
           </div>
 
-          <!-- Additional Note -->
+          <!-- Section 11: Pain Management -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-heartbeat mr-2 text-red-500"></i>
+              11. การจัดการความปวด (Pain Management)
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  11.1.1 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวด (โดยการใช้ยา)
+                </label>
+                <input type="number" id="s9_1_1" step="0.01" oninput="calculatePainTotal()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  11.1.2 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวด (โดยการไม่ใช้ยา)
+                </label>
+                <input type="number" id="s9_1_2" step="0.01" oninput="calculatePainTotal()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-blue-700 mb-2">
+                  <i class="fas fa-calculator mr-2"></i>Total (Auto-sum)
+                </label>
+                <input type="text" id="painTotal" readonly
+                  class="calculated-field w-full px-4 py-2 rounded-lg">
+                <div class="formula-box">
+                  <strong>สูตร:</strong> 11.1.1 + 11.1.2
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  11.2.1 Acute Pain
+                </label>
+                <input type="number" id="s9_2_1" step="0.01"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  11.2.2 Chronic Pain
+                </label>
+                <input type="number" id="s9_2_2" step="0.01"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  11.2.3 Palliative Care Pain Management
+                </label>
+                <input type="number" id="s9_2_3" step="0.01"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+
+            <div class="p-4 bg-green-50 rounded-lg">
+              <h4 class="font-bold text-gray-800 mb-4">11.3 ร้อยละความครบถ้วน (Completeness of Record)</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    11.3.1 จำนวนครั้งของผู้ป่วยที่มีการบันทึกการจัดการความปวดในเวชระเบียน
+                  </label>
+                  <input type="number" id="s9_3_1" step="0.01" oninput="calculateRecordCompleteness()"
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    11.3.2 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวดทั้งหมด
+                  </label>
+                  <input type="number" id="s9_3_2" step="0.01" oninput="calculateRecordCompleteness()"
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-semibold text-blue-700 mb-2">
+                    <i class="fas fa-calculator mr-2"></i>ร้อยละความครบถ้วน (%) (Auto-calculated)
+                  </label>
+                  <input type="text" id="recordCompleteness" readonly
+                    class="calculated-field w-full px-4 py-2 rounded-lg">
+                  <div class="formula-box">
+                    <strong>สูตร:</strong> (11.3.1 / 11.3.2) × 100
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<!-- Additional Note -->
           <div class="section-card">
             <h3 class="section-header">
               <i class="fas fa-comment mr-2 text-purple-600"></i>
@@ -1327,17 +1327,17 @@
       s5_1: "5. จำนวนเวร On-call ที่จัดขึ้นโดยไม่ได้รับค่าตอบแทน",
       s6_1: "6. จำนวน pt ที่เสียชีวิตโดยไม่คาดคิด",
       s6_2: "6. จำนวน pt ที่ Unplan ICU",
-      icu_unplannedReturn3Days: "ย้าย ผป.กลับเข้า ICU ภายใน 3 วัน (ราย)",
-      icu_unplan_med_male: "Unplan ICU อายุรกรรมชาย (ราย)",
-      icu_unplan_med_female: "Unplan ICU อายุรกรรมหญิง (ราย)",
-      icu_unplan_surg_male: "Unplan ICU ศัลยกรรมชาย (ราย)",
-      icu_unplan_surg_female: "Unplan ICU ศัลยกรรมหญิง (ราย)",
-      icu_unplan_ortho: "Unplan ICU ORTHO (ราย)",
-      icu_unplan_obgyne: "Unplan ICU OBGYNE (ราย)",
-      icu_unplan_ped: "Unplan ICU PED (ราย)",
-      icu_unplan_ent: "Unplan ICU ENT (ราย)",
-      icu_unplan_uro: "Unplan ICU URO (ราย)",
-      icu_unplan_neuro: "Unplan ICU NEURO (ราย)",
+      icu_unplannedReturn3Days: "9. ย้าย ผป.กลับเข้า ICU ภายใน 3 วัน (ราย)",
+      icu_unplan_med_male: "10.1 Unplan ICU อายุรกรรมชาย (ราย)",
+      icu_unplan_med_female: "10.2 Unplan ICU อายุรกรรมหญิง (ราย)",
+      icu_unplan_surg_male: "10.3 Unplan ICU ศัลยกรรมชาย SUR (ราย)",
+      icu_unplan_surg_female: "10.4 Unplan ICU ศัลยกรรมหญิง SUR (ราย)",
+      icu_unplan_ortho: "10.5 Unplan ICU ORTHO (ราย)",
+      icu_unplan_obgyne: "10.6 Unplan ICU OBGYNE (ราย)",
+      icu_unplan_ped: "10.7 Unplan ICU PED (ราย)",
+      icu_unplan_ent: "10.8 Unplan ICU ENT (ราย)",
+      icu_unplan_uro: "10.9 Unplan ICU URO (ราย)",
+      icu_unplan_neuro: "10.10 Unplan ICU NEURO (ราย)",
       s7_1: "7.1 จำนวน pt. CPR",
       s7_2: "7.2 จำนวนครั้ง CPR ทั้งหมด",
       s7_3: "7.3 จำนวนครั้ง CPR สำเร็จ",
@@ -1346,14 +1346,14 @@
       s8_3: "8.3 จำนวนครั้งที่ผู้ป่วยที่ได้รับการประเมินล่าช้า",
       s8_4: "8.4 จำนวนผู้ป่วยที่ได้รับการเฝ้าระวังอาการไม่สอดคล้องกับความรุนแรง",
       s8_5: "8.5 จำนวนครั้งที่เฝ้าระวังอาการผู้ป่วยไม่สอดคล้องกับความรุนแรง",
-      s9_1_1: "9.1.1 จำนวนผู้ป่วยที่ได้รับการประเมิน pain score",
-      s9_1_2: "9.1.2 จำนวนผู้ป่วยที่ไม่ได้รับการประเมิน pain score",
+      s9_1_1: "11.1.1 จำนวนผู้ป่วยที่ได้รับการประเมิน pain score",
+      s9_1_2: "11.1.2 จำนวนผู้ป่วยที่ไม่ได้รับการประเมิน pain score",
       painTotal: "Pain Total",
-      s9_2_1: "9.2.1 Pain >=7 ได้รับยาแก้ปวดตามแผนการรักษา",
-      s9_2_2: "9.2.2 Pain >=7 ไม่ได้รับยาแก้ปวดตามแผนการรักษา",
-      s9_2_3: "9.2.3 Pain >=7 หลังได้รับยาแก้ปวดแล้ว pain <=3",
-      s9_3_1: "9.3.1 การบันทึกผลการประเมิน pain score ครบถ้วน",
-      s9_3_2: "9.3.2 การบันทึกผลการประเมิน pain score ไม่ครบถ้วน",
+      s9_2_1: "11.2.1 Pain >=7 ได้รับยาแก้ปวดตามแผนการรักษา",
+      s9_2_2: "11.2.2 Pain >=7 ไม่ได้รับยาแก้ปวดตามแผนการรักษา",
+      s9_2_3: "11.2.3 Pain >=7 หลังได้รับยาแก้ปวดแล้ว pain <=3",
+      s9_3_1: "11.3.1 การบันทึกผลการประเมิน pain score ครบถ้วน",
+      s9_3_2: "11.3.2 การบันทึกผลการประเมิน pain score ไม่ครบถ้วน",
       recordCompleteness: "Record Completeness (%)",
       note: "หมายเหตุ"
     };
@@ -1707,7 +1707,19 @@
         s6_1: document.getElementById('s6_1').value || '',
         s6_2: document.getElementById('s6_2').value || '',
 
-        // Section 5.1 (ICU only)
+        // Section 6
+        s7_1: document.getElementById('s7_1').value || '',
+        s7_2: document.getElementById('s7_2').value || '',
+        s7_3: document.getElementById('s7_3').value || '',
+        
+        // Section 7
+        s8_1: document.getElementById('s8_1').value || '',
+        s8_2: document.getElementById('s8_2').value || '',
+        s8_3: document.getElementById('s8_3').value || '',
+        s8_4: document.getElementById('s8_4').value || '',
+        s8_5: document.getElementById('s8_5').value || '',
+
+        // Section 8-10 (ICU only)
         icu_unplannedReturn3Days: document.getElementById('icu_unplannedReturn3Days').value || '',
         icu_unplan_med_male: document.getElementById('icu_unplan_med_male').value || '',
         icu_unplan_med_female: document.getElementById('icu_unplan_med_female').value || '',
@@ -1720,19 +1732,7 @@
         icu_unplan_uro: document.getElementById('icu_unplan_uro').value || '',
         icu_unplan_neuro: document.getElementById('icu_unplan_neuro').value || '',
 
-        // Section 6
-        s7_1: document.getElementById('s7_1').value || '',
-        s7_2: document.getElementById('s7_2').value || '',
-        s7_3: document.getElementById('s7_3').value || '',
-        
-        // Section 7
-        s8_1: document.getElementById('s8_1').value || '',
-        s8_2: document.getElementById('s8_2').value || '',
-        s8_3: document.getElementById('s8_3').value || '',
-        s8_4: document.getElementById('s8_4').value || '',
-        s8_5: document.getElementById('s8_5').value || '',
-        
-        // Section 8
+        // Section 11
         s9_1_1: document.getElementById('s9_1_1').value || '',
         s9_1_2: document.getElementById('s9_1_2').value || '',
         painTotal: document.getElementById('painTotal').value || '',
@@ -2171,9 +2171,8 @@
         { title: '5. On-call & Unplanned', color: 'border-purple-500', columns: 'md:grid-cols-2', fields: ['s5_1', 's6_1', 's6_2'] },
         { title: '7. CPR', color: 'border-pink-500', columns: 'md:grid-cols-3', fields: ['s7_1', 's7_2', 's7_3'] },
         { title: '8. SOS Scores', color: 'border-indigo-500', columns: 'md:grid-cols-2', fields: ['s8_1', 's8_2', 's8_3', 's8_4', 's8_5'] },
-        { title: '9. Pain Management', color: 'border-blue-500', columns: 'md:grid-cols-2', fields: ['s9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness'] },
         {
-          title: '10. ข้อมูลเฉพาะหอผู้ป่วยหนัก',
+          title: '9-10. ข้อมูลเฉพาะหอผู้ป่วยหนัก',
           color: 'border-indigo-500',
           columns: 'md:grid-cols-2',
           requireIcu: true,
@@ -2182,7 +2181,8 @@
             ...(showMedBreakdown ? ['icu_unplan_med_male', 'icu_unplan_med_female'] : []),
             ...(showFullBreakdown ? ['icu_unplan_surg_male', 'icu_unplan_surg_female', 'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro'] : [])
           ]
-        }
+        },
+        { title: '11. Pain Management', color: 'border-blue-500', columns: 'md:grid-cols-2', fields: ['s9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness'] }
       ];
 
       let fieldsHtml = '<div class="space-y-6">';
