@@ -1035,7 +1035,7 @@
   <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-8 text-center">
       <div class="loading mx-auto mb-4"></div>
-      <p class="text-gray-700 font-semibold">กำลังโหลดข้อมูล...</p>
+      <p id="loadingMessage" class="text-gray-700 font-semibold">กำลังโหลดข้อมูล...</p>
     </div>
   </div>
 
@@ -1724,7 +1724,7 @@
         return;
       }
 
-      showLoading();
+      showLoading('กำลังบันทึกข้อมูล...');
       
       const fiscalYear = document.getElementById('fiscalYear').value;
       const month = document.getElementById('month').value;
@@ -1839,7 +1839,7 @@
     }
 
     function loadDataForPeriod() {
-      showLoading();
+        showLoading('กำลังลบข้อมูล...');
       
       const fiscalYear = document.getElementById('fiscalYear').value;
       const month = document.getElementById('month').value;
@@ -1985,7 +1985,7 @@
     }
 
     function loadYearData() {
-      showLoading();
+        showLoading('กำลังลบข้อมูล...');
 
       const fiscalYear = document.getElementById('viewFiscalYear').value.trim();
       const deptId = (currentUser?.id || '').trim();
@@ -2202,7 +2202,7 @@
       
       // If no cache, fetch from server
       console.log('Fetching data for', month);
-      showLoading();
+      showLoading('กำลังลบข้อมูล...');
       const fiscalYear = document.getElementById('viewFiscalYear').value;
       
       google.script.run
@@ -2304,9 +2304,9 @@
     });
 
     function updateData() {
-      showLoading();
+      showLoading('กำลังบันทึกข้อมูล...');
       closeEditModal();
-      
+
       const formData = new FormData(document.getElementById('editForm'));
       const data = {
         id: currentEditId,
@@ -2314,12 +2314,12 @@
         departmentName: currentUser.name,
         fiscalYear: document.getElementById('viewFiscalYear').value
       };
-      
+
       // Collect all form data
       for (let [key, value] of formData.entries()) {
         data[key] = value;
       }
-      
+
       google.script.run
         .withSuccessHandler(function(response) {
           hideLoading();
@@ -2342,10 +2342,10 @@
       if (!confirm(`คุณต้องการลบข้อมูลเดือน ${month} ใช่หรือไม่?\n\nการลบนี้ไม่สามารถย้อนกลับได้!`)) {
         return;
       }
-      
-      showLoading();
+
+      showLoading('กำลังลบข้อมูล...');
       const fiscalYear = document.getElementById('viewFiscalYear').value;
-      
+
       google.script.run
         .withSuccessHandler(function(response) {
           hideLoading();
@@ -2364,11 +2364,19 @@
     }
 
     // Utility functions
-    function showLoading() {
+    function showLoading(message = 'กำลังโหลดข้อมูล...') {
+      const loadingLabel = document.getElementById('loadingMessage');
+      if (loadingLabel) {
+        loadingLabel.textContent = message;
+      }
       document.getElementById('loadingOverlay').classList.remove('hidden');
     }
 
     function hideLoading() {
+      const loadingLabel = document.getElementById('loadingMessage');
+      if (loadingLabel) {
+        loadingLabel.textContent = 'กำลังโหลดข้อมูล...';
+      }
       document.getElementById('loadingOverlay').classList.add('hidden');
     }
 
@@ -2433,7 +2441,7 @@
     }
 
     function loadAdminData() {
-      showLoading();
+      showLoading('กำลังบันทึกข้อมูล...');
       const fiscalYear = document.getElementById('adminFiscalYear').value;
       
       console.log('Loading admin data for year:', fiscalYear);
@@ -2627,7 +2635,7 @@
         return;
       }
       
-      showLoading();
+      showLoading('กำลังบันทึกข้อมูล...');
       const fiscalYear = document.getElementById('deptFiscalYear').value;
       const dept = departments.find(d => d.id === deptId);
       
