@@ -93,6 +93,30 @@ function generateId() {
 }
 
 /**
+ * แปลงชื่อเดือนให้เป็นรูปแบบมาตรฐาน (ภาษาไทยเต็ม) เพื่อใช้เทียบข้อมูล
+ */
+function normalizeMonthValue(month) {
+  const monthStr = String(month || '').trim();
+  const monthMap = {
+    '10': 'ตุลาคม', 'ตุลา': 'ตุลาคม', 'ต.ค.': 'ตุลาคม', 'october': 'ตุลาคม', 'oct': 'ตุลาคม',
+    '11': 'พฤศจิกายน', 'พย': 'พฤศจิกายน', 'พ.ย.': 'พฤศจิกายน', 'november': 'พฤศจิกายน', 'nov': 'พฤศจิกายน',
+    '12': 'ธันวาคม', 'ธ.ค.': 'ธันวาคม', 'december': 'ธันวาคม', 'dec': 'ธันวาคม',
+    '1': 'มกราคม', 'ม.ค.': 'มกราคม', 'january': 'มกราคม', 'jan': 'มกราคม',
+    '2': 'กุมภาพันธ์', 'ก.พ.': 'กุมภาพันธ์', 'february': 'กุมภาพันธ์', 'feb': 'กุมภาพันธ์',
+    '3': 'มีนาคม', 'มี.ค.': 'มีนาคม', 'march': 'มีนาคม', 'mar': 'มีนาคม',
+    '4': 'เมษายน', 'เม.ย.': 'เมษายน', 'april': 'เมษายน', 'apr': 'เมษายน',
+    '5': 'พฤษภาคม', 'พ.ค.': 'พฤษภาคม', 'may': 'พฤษภาคม',
+    '6': 'มิถุนายน', 'มิ.ย.': 'มิถุนายน', 'june': 'มิถุนายน', 'jun': 'มิถุนายน',
+    '7': 'กรกฎาคม', 'ก.ค.': 'กรกฎาคม', 'july': 'กรกฎาคม', 'jul': 'กรกฎาคม',
+    '8': 'สิงหาคม', 'ส.ค.': 'สิงหาคม', 'august': 'สิงหาคม', 'aug': 'สิงหาคม',
+    '9': 'กันยายน', 'ก.ย.': 'กันยายน', 'september': 'กันยายน', 'sep': 'กันยายน'
+  };
+
+  const normalizedKey = monthStr.toLowerCase();
+  return monthMap[normalizedKey] || monthStr; // ถ้าไม่ตรง map ให้คืนค่าที่ trim แล้ว
+}
+
+/**
  * บันทึกข้อมูล QA
  */
 function saveQAData(data) {
@@ -102,14 +126,14 @@ function saveQAData(data) {
     // Normalize key identifiers to avoid whitespace issues
     const departmentId = String(data.departmentId || '').trim();
     const fiscalYear = String(data.fiscalYear || '').trim();
-    const month = String(data.month || '').trim();
+    const month = normalizeMonthValue(data.month);
 
     // ตรวจสอบว่ามีข้อมูลซ้ำหรือไม่
     const existingData = sheet.getDataRange().getValues();
     for (let i = 1; i < existingData.length; i++) {
       const rowDeptId = String(existingData[i][1]).trim();
       const rowFiscalYear = String(existingData[i][3]).trim();
-      const rowMonth = String(existingData[i][4]).trim();
+      const rowMonth = normalizeMonthValue(existingData[i][4]);
 
       if (rowDeptId === departmentId &&
           rowFiscalYear === fiscalYear &&
@@ -175,6 +199,7 @@ function updateExistingRow(sheet, rowIndex, data) {
   try {
     // อัพเดทวันที่
     sheet.getRange(rowIndex, 6).setValue(new Date());
+    sheet.getRange(rowIndex, 5).setValue(normalizeMonthValue(data.month));
     
     // อัพเดทข้อมูล
     let colIndex = 7;
@@ -353,7 +378,7 @@ function getYearData(departmentId, fiscalYear) {
       // Get values and trim them
       const rowDeptId = String(data[i][1]).trim();
       const rowFiscalYear = String(data[i][3]).trim();
-      const rowMonth = String(data[i][4]).trim();
+      const rowMonth = normalizeMonthValue(data[i][4]);
       
       // Debug first 3 rows
       if (i <= 3) {
@@ -366,13 +391,18 @@ function getYearData(departmentId, fiscalYear) {
         
         Logger.log('✓ FOUND Match at row ' + i + ': Month = "' + rowMonth + '"');
         
+        const timestampCell = data[i][5];
+        const parsedTimestamp = timestampCell instanceof Date
+          ? timestampCell
+          : new Date(timestampCell);
+
         const monthData = {
           id: data[i][0],
           departmentId: rowDeptId,
           departmentName: String(data[i][2]).trim(),
           fiscalYear: rowFiscalYear,
           month: rowMonth,
-          timestamp: data[i][5],
+          timestamp: isNaN(parsedTimestamp.getTime()) ? String(timestampCell || '') : parsedTimestamp.toISOString(),
           
           // Section 1
           s1_1: data[i][6], s1_2: data[i][7], s1_3: data[i][8], s1_4: data[i][9], s1_5: data[i][10],
@@ -456,12 +486,12 @@ function deleteQAData(departmentId, fiscalYear, month) {
 
     const deptIdStr = String(departmentId || '').trim();
     const fiscalYearStr = String(fiscalYear || '').trim();
-    const monthStr = String(month || '').trim();
+    const monthStr = normalizeMonthValue(month);
 
     for (let i = 1; i < data.length; i++) {
       const rowDeptId = String(data[i][1]).trim();
       const rowFiscalYear = String(data[i][3]).trim();
-      const rowMonth = String(data[i][4]).trim();
+      const rowMonth = normalizeMonthValue(data[i][4]);
 
       if (rowDeptId === deptIdStr &&
           rowFiscalYear === fiscalYearStr &&
