@@ -679,6 +679,85 @@
             </div>
           </div>
 
+          <!-- Section 5.1: ICU-specific metrics -->
+          <div id="icuSection" class="section-card hidden">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="section-header mb-0">
+                <i class="fas fa-procedures mr-2 text-purple-600"></i>
+                ข้อมูลเฉพาะหอผู้ป่วยหนัก
+              </h3>
+              <span class="text-xs text-purple-700 bg-purple-50 px-3 py-1 rounded-full font-semibold">แสดงเฉพาะ ICU</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">9. ย้าย ผป.กลับเข้า ICU อย่างไม่คาดคิดภายใน 3 วัน (ราย)</label>
+                <input type="number" id="icu_unplannedReturn3Days" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="med">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.1 อายุรกรรมชาย (Med ชาย) - ราย</label>
+                <input type="number" id="icu_unplan_med_male" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="med">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.2 อายุรกรรมหญิง (Med หญิง) - ราย</label>
+                <input type="number" id="icu_unplan_med_female" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.3 ศัลยกรรมชาย (SUR ชาย) - ราย</label>
+                <input type="number" id="icu_unplan_surg_male" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.4 ศัลยกรรมหญิง (SUR หญิง) - ราย</label>
+                <input type="number" id="icu_unplan_surg_female" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.5 กระดูกและข้อ (ORTHO) - ราย</label>
+                <input type="number" id="icu_unplan_ortho" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.6 สูติกรรม-นรีเวช (OBGYNE) - ราย</label>
+                <input type="number" id="icu_unplan_obgyne" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.7 หอผู้ป่วยหนักกุมารเวช (PED) - ราย</label>
+                <input type="number" id="icu_unplan_ped" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.8 หอผู้ป่วยโสต ศอ นาสิก (ENT) - ราย</label>
+                <input type="number" id="icu_unplan_ent" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.9 ศัลยกรรมระบบทางเดินปัสสาวะ (URO) - ราย</label>
+                <input type="number" id="icu_unplan_uro" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.10 ศัลยกรรมระบบประสาทและสมอง (NEURO) - ราย</label>
+                <input type="number" id="icu_unplan_neuro" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
           <!-- Section 6: CPR -->
           <div class="section-card">
             <h3 class="section-header">
@@ -1246,6 +1325,71 @@
       { id: "DEPT021", name: "หอผู้ป่วยหนักรวม(ICU_รวม)", password: "ICU2568" }
     ];
 
+    const ICU_DEPARTMENTS = ["DEPT007", "DEPT008", "DEPT019", "DEPT021"];
+
+    const fieldLabels = {
+      s1_1: "1.1 จำนวนอุบัติการณ์การระบุตัว ผป.ผิดคน",
+      s1_2: "1.2 จำนวนอุบัติการณ์ให้การรักษาพยาบาลผิดคน",
+      s1_3: "1.3 จำนวนอุบัติการณ์ความผิดพลาดในการบริหารยา (Drug Admin Error) ตั้งแต่ระดับ C ขึ้นไป",
+      s1_4: "1.4 จำนวนอุบัติการณ์ความผิดพลาดในการให้เลือดและ/หรือส่วนประกอบของเลือด",
+      s1_5: "1.5 จำนวนอุบัติการณ์การตายอย่างไม่คาดคิด",
+      s1_6_1: "1.6.1 จำนวนผู้ป่วยเกิดแผลกดทับรายใหม่ stage 2",
+      s1_6_2: "1.6.2 จำนวนผู้ป่วยเสี่ยงในเวรบ่าย",
+      s1_6_3: "1.6.3 จำนวนผู้ป่วยเกิดแผลกดทับรายใหม่",
+      s1_6_4: "1.6.4 จำนวนผู้ป่วยเสี่ยงทั้งหมด",
+      pressureUlcerRate: "อัตราแผลกดทับ (%)",
+      s1_7: "1.7 จำนวนอุบัติการณ์การพลัดตกหกล้มระดับ moderate ขึ้นไป",
+      s1_8: "1.8 จำนวนอุบัติการณ์ความคลาดเคลื่อนทางหัตถการ (Procedure Error)",
+      s1_9: "1.9 จำนวนอุบัติการณ์ Sepsis ระดับ red",
+      s1_10: "1.10 จำนวนยา/เวชภัณฑ์/อุปกรณ์ทางการแพทย์หมดอายุเหลือค้าง",
+      s2_1: "2.1 จำนวนผป.รับใหม่ทั้งหมด",
+      s2_2: "2.2 จำนวนผป.รับใหม่แล้วกลับมารักษาซ้ำภายใน 28 วันโดยไม่ได้นัด",
+      readmissionRate: "Readmission Rate (%)",
+      s3_1: "3.1 Patient Day ทั้งหมด (วัน)",
+      daysInMonth: "จำนวนวันในเดือน",
+      averageLOS: "Average LOS",
+      s4_a: "4.1 RN ทั้งหมด (คน)",
+      s4_b: "4.2 PN ทั้งหมด (คน)",
+      s4_c: "4.3 TN, PN, AID รวม (คน)",
+      rnHr: "RN hr (A×7)",
+      auxHr: "Auxiliary hr ((A+C)×7)",
+      ratioRnAux: "Ratio RN/Aux",
+      actualHPPD: "Actual HPPD",
+      productivity: "Productivity (%)",
+      s5_1: "5. จำนวนเวร On-call ที่จัดขึ้นโดยไม่ได้รับค่าตอบแทน",
+      s6_1: "6. จำนวน pt ที่เสียชีวิตโดยไม่คาดคิด",
+      s6_2: "6. จำนวน pt ที่ Unplan ICU",
+      icu_unplannedReturn3Days: "ย้าย ผป.กลับเข้า ICU ภายใน 3 วัน (ราย)",
+      icu_unplan_med_male: "Unplan ICU อายุรกรรมชาย (ราย)",
+      icu_unplan_med_female: "Unplan ICU อายุรกรรมหญิง (ราย)",
+      icu_unplan_surg_male: "Unplan ICU ศัลยกรรมชาย (ราย)",
+      icu_unplan_surg_female: "Unplan ICU ศัลยกรรมหญิง (ราย)",
+      icu_unplan_ortho: "Unplan ICU ORTHO (ราย)",
+      icu_unplan_obgyne: "Unplan ICU OBGYNE (ราย)",
+      icu_unplan_ped: "Unplan ICU PED (ราย)",
+      icu_unplan_ent: "Unplan ICU ENT (ราย)",
+      icu_unplan_uro: "Unplan ICU URO (ราย)",
+      icu_unplan_neuro: "Unplan ICU NEURO (ราย)",
+      s7_1: "7.1 จำนวน pt. CPR",
+      s7_2: "7.2 จำนวนครั้ง CPR ทั้งหมด",
+      s7_3: "7.3 จำนวนครั้ง CPR สำเร็จ",
+      s8_1: "8.1 จำนวนผู้ป่วยที่ได้รับการเฝ้าระวังอาการฯ ทั้งหมด",
+      s8_2: "8.2 จำนวนผู้ป่วยที่ได้รับการประเมินล่าช้า",
+      s8_3: "8.3 จำนวนครั้งที่ผู้ป่วยที่ได้รับการประเมินล่าช้า",
+      s8_4: "8.4 จำนวนผู้ป่วยที่ได้รับการเฝ้าระวังอาการไม่สอดคล้องกับความรุนแรง",
+      s8_5: "8.5 จำนวนครั้งที่เฝ้าระวังอาการผู้ป่วยไม่สอดคล้องกับความรุนแรง",
+      s9_1_1: "9.1.1 จำนวนผู้ป่วยที่ได้รับการประเมิน pain score",
+      s9_1_2: "9.1.2 จำนวนผู้ป่วยที่ไม่ได้รับการประเมิน pain score",
+      painTotal: "Pain Total",
+      s9_2_1: "9.2.1 Pain >=7 ได้รับยาแก้ปวดตามแผนการรักษา",
+      s9_2_2: "9.2.2 Pain >=7 ไม่ได้รับยาแก้ปวดตามแผนการรักษา",
+      s9_2_3: "9.2.3 Pain >=7 หลังได้รับยาแก้ปวดแล้ว pain <=3",
+      s9_3_1: "9.3.1 การบันทึกผลการประเมิน pain score ครบถ้วน",
+      s9_3_2: "9.3.2 การบันทึกผลการประเมิน pain score ไม่ครบถ้วน",
+      recordCompleteness: "Record Completeness (%)",
+      note: "หมายเหตุ"
+    };
+
     // Global variables
     let currentUser = null;
     let currentEditId = null;
@@ -1308,6 +1452,7 @@
         document.getElementById('currentDepartment').textContent = dept.name;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('mainScreen').classList.remove('hidden');
+        applyIcuVisibility();
         loadDataForPeriod();
       } else {
         showLoginError('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
@@ -1343,6 +1488,7 @@
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('mainScreen').classList.add('hidden');
         document.getElementById('passwordInput').value = '';
+        applyIcuVisibility();
         clearForm();
       }
     }
@@ -1369,6 +1515,37 @@
         viewContent.classList.remove('hidden');
         entryContent.classList.add('hidden');
         loadYearData();
+      }
+    }
+
+    function applyIcuVisibility() {
+      const section = document.getElementById('icuSection');
+      if (!section) return;
+
+      const deptId = currentUser?.id || '';
+      const isIcu = ICU_DEPARTMENTS.includes(deptId);
+      const showMedBreakdown = ['DEPT007', 'DEPT008', 'DEPT021'].includes(deptId);
+      const showFullBreakdown = deptId === 'DEPT021';
+
+      section.classList.toggle('hidden', !isIcu);
+
+      const fieldsToReset = [
+        'icu_unplannedReturn3Days', 'icu_unplan_med_male', 'icu_unplan_med_female',
+        'icu_unplan_surg_male', 'icu_unplan_surg_female', 'icu_unplan_ortho', 'icu_unplan_obgyne',
+        'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro'
+      ];
+
+      document.querySelectorAll('[data-icu-visibility]').forEach(el => {
+        const mode = el.getAttribute('data-icu-visibility');
+        const shouldShow = mode === 'med' ? showMedBreakdown : showFullBreakdown;
+        el.classList.toggle('hidden', !(isIcu && shouldShow));
+      });
+
+      if (!isIcu) {
+        fieldsToReset.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
       }
     }
 
@@ -1542,12 +1719,25 @@
         ratioRnAux: document.getElementById('ratioRnAux').value || '',
         actualHPPD: document.getElementById('actualHPPD').value || '',
         productivity: document.getElementById('productivityValue').textContent || '',
-        
+
         // Section 5
         s5_1: document.getElementById('s5_1').value || '',
         s6_1: document.getElementById('s6_1').value || '',
         s6_2: document.getElementById('s6_2').value || '',
-        
+
+        // Section 5.1 (ICU only)
+        icu_unplannedReturn3Days: document.getElementById('icu_unplannedReturn3Days').value || '',
+        icu_unplan_med_male: document.getElementById('icu_unplan_med_male').value || '',
+        icu_unplan_med_female: document.getElementById('icu_unplan_med_female').value || '',
+        icu_unplan_surg_male: document.getElementById('icu_unplan_surg_male').value || '',
+        icu_unplan_surg_female: document.getElementById('icu_unplan_surg_female').value || '',
+        icu_unplan_ortho: document.getElementById('icu_unplan_ortho').value || '',
+        icu_unplan_obgyne: document.getElementById('icu_unplan_obgyne').value || '',
+        icu_unplan_ped: document.getElementById('icu_unplan_ped').value || '',
+        icu_unplan_ent: document.getElementById('icu_unplan_ent').value || '',
+        icu_unplan_uro: document.getElementById('icu_unplan_uro').value || '',
+        icu_unplan_neuro: document.getElementById('icu_unplan_neuro').value || '',
+
         // Section 6
         s7_1: document.getElementById('s7_1').value || '',
         s7_2: document.getElementById('s7_2').value || '',
@@ -1655,6 +1845,17 @@
       if (data.s5_1) document.getElementById('s5_1').value = data.s5_1;
       if (data.s6_1) document.getElementById('s6_1').value = data.s6_1;
       if (data.s6_2) document.getElementById('s6_2').value = data.s6_2;
+      if (data.icu_unplannedReturn3Days) document.getElementById('icu_unplannedReturn3Days').value = data.icu_unplannedReturn3Days;
+      if (data.icu_unplan_med_male) document.getElementById('icu_unplan_med_male').value = data.icu_unplan_med_male;
+      if (data.icu_unplan_med_female) document.getElementById('icu_unplan_med_female').value = data.icu_unplan_med_female;
+      if (data.icu_unplan_surg_male) document.getElementById('icu_unplan_surg_male').value = data.icu_unplan_surg_male;
+      if (data.icu_unplan_surg_female) document.getElementById('icu_unplan_surg_female').value = data.icu_unplan_surg_female;
+      if (data.icu_unplan_ortho) document.getElementById('icu_unplan_ortho').value = data.icu_unplan_ortho;
+      if (data.icu_unplan_obgyne) document.getElementById('icu_unplan_obgyne').value = data.icu_unplan_obgyne;
+      if (data.icu_unplan_ped) document.getElementById('icu_unplan_ped').value = data.icu_unplan_ped;
+      if (data.icu_unplan_ent) document.getElementById('icu_unplan_ent').value = data.icu_unplan_ent;
+      if (data.icu_unplan_uro) document.getElementById('icu_unplan_uro').value = data.icu_unplan_uro;
+      if (data.icu_unplan_neuro) document.getElementById('icu_unplan_neuro').value = data.icu_unplan_neuro;
       
       // Section 6
       if (data.s7_1) document.getElementById('s7_1').value = data.s7_1;
@@ -1700,6 +1901,17 @@
       document.getElementById('productivityValue').textContent = '0.00%';
       document.getElementById('painTotal').value = '';
       document.getElementById('recordCompleteness').value = '';
+      document.getElementById('icu_unplannedReturn3Days').value = '';
+      document.getElementById('icu_unplan_med_male').value = '';
+      document.getElementById('icu_unplan_med_female').value = '';
+      document.getElementById('icu_unplan_surg_male').value = '';
+      document.getElementById('icu_unplan_surg_female').value = '';
+      document.getElementById('icu_unplan_ortho').value = '';
+      document.getElementById('icu_unplan_obgyne').value = '';
+      document.getElementById('icu_unplan_ped').value = '';
+      document.getElementById('icu_unplan_ent').value = '';
+      document.getElementById('icu_unplan_uro').value = '';
+      document.getElementById('icu_unplan_neuro').value = '';
       updateDaysInMonth();
     }
 
@@ -1864,7 +2076,37 @@
               <div><strong>Record Completeness:</strong> ${data.recordCompleteness || 'N/A'}%</div>
             </div>
           </div>
-          
+
+          ${(() => {
+            const icuFields = [
+              'icu_unplannedReturn3Days', 'icu_unplan_med_male', 'icu_unplan_med_female', 'icu_unplan_surg_male', 'icu_unplan_surg_female',
+              'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro'
+            ];
+            const hasIcuData = icuFields.some(f => data[f]);
+            if (!hasIcuData) return '';
+
+            const renderRow = (label, key) => data[key] ? `<div><strong>${label}:</strong> ${data[key]} ราย</div>` : '';
+
+            return `
+              <div class="bg-indigo-50 p-4 rounded-lg">
+                <h4 class="font-bold text-lg mb-2"><i class="fas fa-procedures mr-2"></i>ข้อมูลเฉพาะหอผู้ป่วยหนัก</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                  ${renderRow('Unplanned return to ICU ≤ 3 วัน', 'icu_unplannedReturn3Days')}
+                  ${renderRow('Unplan ICU อายุรกรรมชาย', 'icu_unplan_med_male')}
+                  ${renderRow('Unplan ICU อายุรกรรมหญิง', 'icu_unplan_med_female')}
+                  ${renderRow('Unplan ICU ศัลยกรรมชาย', 'icu_unplan_surg_male')}
+                  ${renderRow('Unplan ICU ศัลยกรรมหญิง', 'icu_unplan_surg_female')}
+                  ${renderRow('Unplan ICU ORTHO', 'icu_unplan_ortho')}
+                  ${renderRow('Unplan ICU OBGYNE', 'icu_unplan_obgyne')}
+                  ${renderRow('Unplan ICU PED', 'icu_unplan_ped')}
+                  ${renderRow('Unplan ICU ENT', 'icu_unplan_ent')}
+                  ${renderRow('Unplan ICU URO', 'icu_unplan_uro')}
+                  ${renderRow('Unplan ICU NEURO', 'icu_unplan_neuro')}
+                </div>
+              </div>
+            `;
+          })()}
+
           ${data.note ? `
           <div class="bg-yellow-50 p-4 rounded-lg">
             <h4 class="font-bold text-lg mb-2"><i class="fas fa-sticky-note mr-2"></i>หมายเหตุ</h4>
@@ -1932,71 +2174,61 @@
     function showEditModal(month, data) {
       document.getElementById('editModalTitle').textContent = `แก้ไขข้อมูลเดือน ${month}`;
       currentEditId = data.id;
-      
-      // Generate full edit form with all fields
+
+      const isIcu = ICU_DEPARTMENTS.includes(currentUser?.id || '');
+      const showMedBreakdown = ['DEPT007', 'DEPT008', 'DEPT021'].includes(currentUser?.id || '');
+      const showFullBreakdown = currentUser?.id === 'DEPT021';
+
+      const sectionConfigs = [
+        { title: '1. ความปลอดภัยของผู้ใช้บริการ', color: 'border-purple-500', columns: 'md:grid-cols-2', fields: ['s1_1', 's1_2', 's1_3', 's1_4', 's1_5'] },
+        { title: '1.6 ตัวชี้วัดแผลกดทับ', color: 'border-blue-500', columns: 'md:grid-cols-2', fields: ['s1_6_1', 's1_6_2', 's1_6_3', 's1_6_4', 'pressureUlcerRate'] },
+        { title: '1.7 - 1.10', color: 'border-purple-500', columns: 'md:grid-cols-2', fields: ['s1_7', 's1_8', 's1_9', 's1_10'] },
+        { title: '2. Readmission Rate', color: 'border-green-500', columns: 'md:grid-cols-2', fields: ['s2_1', 's2_2', 'readmissionRate'] },
+        { title: '3. Average LOS', color: 'border-yellow-500', columns: 'md:grid-cols-2', fields: ['s3_1', 'daysInMonth', 'averageLOS'] },
+        { title: '4. Productivity', color: 'border-red-500', columns: 'md:grid-cols-3', fields: ['s4_a', 's4_b', 's4_c', 'rnHr', 'auxHr', 'ratioRnAux', 'actualHPPD', 'productivity'] },
+        { title: '5. On-call & Unplanned', color: 'border-purple-500', columns: 'md:grid-cols-2', fields: ['s5_1', 's6_1', 's6_2'] },
+        {
+          title: '5.1 ข้อมูลเฉพาะหอผู้ป่วยหนัก',
+          color: 'border-indigo-500',
+          columns: 'md:grid-cols-2',
+          requireIcu: true,
+          fields: [
+            'icu_unplannedReturn3Days',
+            ...(showMedBreakdown ? ['icu_unplan_med_male', 'icu_unplan_med_female'] : []),
+            ...(showFullBreakdown ? ['icu_unplan_surg_male', 'icu_unplan_surg_female', 'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro'] : [])
+          ]
+        },
+        { title: '7. CPR', color: 'border-pink-500', columns: 'md:grid-cols-3', fields: ['s7_1', 's7_2', 's7_3'] },
+        { title: '8. SOS Scores', color: 'border-indigo-500', columns: 'md:grid-cols-2', fields: ['s8_1', 's8_2', 's8_3', 's8_4', 's8_5'] },
+        { title: '9. Pain Management', color: 'border-blue-500', columns: 'md:grid-cols-2', fields: ['s9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness'] }
+      ];
+
       let fieldsHtml = '<div class="space-y-6">';
-      
-      // Section 1
-      fieldsHtml += '<div class="border-l-4 border-purple-500 pl-4">';
-      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 1: Patient Safety</h4>';
-      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
-      for (let i = 1; i <= 10; i++) {
-        fieldsHtml += `<div><label class="text-xs text-gray-600">s1_${i}</label>`;
-        fieldsHtml += `<input type="number" name="s1_${i}" value="${data['s1_' + i] || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      }
-      fieldsHtml += '</div></div>';
-      
-      // Section 1.6 (Pressure Ulcer)
-      fieldsHtml += '<div class="border-l-4 border-blue-500 pl-4">';
-      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 1.6: Pressure Ulcer</h4>';
-      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
-      for (let i = 1; i <= 4; i++) {
-        fieldsHtml += `<div><label class="text-xs text-gray-600">s1_6_${i}</label>`;
-        fieldsHtml += `<input type="number" name="s1_6_${i}" value="${data['s1_6_' + i] || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      }
-      fieldsHtml += '</div></div>';
-      
-      // Section 2
-      fieldsHtml += '<div class="border-l-4 border-green-500 pl-4">';
-      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 2: Readmission Rate</h4>';
-      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
-      for (let i = 1; i <= 2; i++) {
-        fieldsHtml += `<div><label class="text-xs text-gray-600">s2_${i}</label>`;
-        fieldsHtml += `<input type="number" name="s2_${i}" value="${data['s2_' + i] || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      }
-      fieldsHtml += '</div></div>';
-      
-      // Section 3
-      fieldsHtml += '<div class="border-l-4 border-yellow-500 pl-4">';
-      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 3: Average LOS</h4>';
-      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
-      fieldsHtml += `<div><label class="text-xs text-gray-600">s3_1</label>`;
-      fieldsHtml += `<input type="number" name="s3_1" value="${data.s3_1 || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      fieldsHtml += '</div></div>';
-      
-      // Section 4
-      fieldsHtml += '<div class="border-l-4 border-red-500 pl-4">';
-      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 4: Productivity</h4>';
-      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-3 gap-3">';
-      fieldsHtml += `<div><label class="text-xs text-gray-600">s4_a</label>`;
-      fieldsHtml += `<input type="number" name="s4_a" value="${data.s4_a || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      fieldsHtml += `<div><label class="text-xs text-gray-600">s4_b</label>`;
-      fieldsHtml += `<input type="number" name="s4_b" value="${data.s4_b || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      fieldsHtml += `<div><label class="text-xs text-gray-600">s4_c</label>`;
-      fieldsHtml += `<input type="number" name="s4_c" value="${data.s4_c || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
-      fieldsHtml += '</div></div>';
-      
-      // Remaining sections (simplified)
-      fieldsHtml += '<div class="p-4 bg-blue-50 rounded">';
-      fieldsHtml += '<p class="text-sm text-gray-700"><i class="fas fa-info-circle mr-2"></i>สามารถแก้ไขข้อมูลหลักได้ที่นี่ สำหรับข้อมูลเพิ่มเติม กรุณาไปที่ Tab "บันทึกข้อมูล"</p>';
-      fieldsHtml += '</div>';
-      
+
+      sectionConfigs.forEach(section => {
+        if (section.requireIcu && !isIcu) return;
+        if (!section.fields.length) return;
+
+        fieldsHtml += `<div class="border-l-4 ${section.color} pl-4">`;
+        fieldsHtml += `<h4 class="font-bold text-gray-800 mb-3">${section.title}</h4>`;
+        fieldsHtml += `<div class="grid grid-cols-1 ${section.columns} gap-3">`;
+
+        section.fields.forEach(field => {
+          const label = fieldLabels[field] || field;
+          const value = data[field] || '';
+          fieldsHtml += `<div><label class="text-xs text-gray-600">${label}</label>`;
+          fieldsHtml += `<input type="number" name="${field}" value="${value}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+        });
+
+        fieldsHtml += '</div></div>';
+      });
+
       // Note
       fieldsHtml += '<div><label class="text-sm font-semibold text-gray-700">หมายเหตุ</label>';
       fieldsHtml += `<textarea name="note" rows="2" class="input-field w-full px-3 py-2 border rounded">${data.note || ''}</textarea></div>`;
-      
+
       fieldsHtml += '</div>';
-      
+
       document.getElementById('editFormFields').innerHTML = fieldsHtml;
       document.getElementById('editModal').classList.remove('hidden');
     }

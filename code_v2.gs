@@ -33,7 +33,7 @@ function initializeSheet() {
   
   if (!sheet) {
     sheet = ss.insertSheet('QAData_V2');
-    
+
     // สร้าง Headers
     const headers = [
       'ID', 'แผนก ID', 'ชื่อแผนก', 'ปีงบประมาณ', 'เดือน', 'วันที่บันทึก',
@@ -66,7 +66,13 @@ function initializeSheet() {
       's9_1_1', 's9_1_2', 'painTotal',
       's9_2_1', 's9_2_2', 's9_2_3',
       's9_3_1', 's9_3_2', 'recordCompleteness',
-      
+
+      // Section 9: ICU-specific metrics
+      'icu_unplannedReturn3Days',
+      'icu_unplan_med_male', 'icu_unplan_med_female',
+      'icu_unplan_surg_male', 'icu_unplan_surg_female',
+      'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro',
+
       'หมายเหตุ'
     ];
     
@@ -75,13 +81,36 @@ function initializeSheet() {
     sheet.getRange(1, 1, 1, headers.length).setBackground('#667eea');
     sheet.getRange(1, 1, 1, headers.length).setFontColor('#ffffff');
     sheet.setFrozenRows(1);
-    
+
     // Auto-resize columns
     for (let i = 1; i <= headers.length; i++) {
       sheet.autoResizeColumn(i);
     }
+  } else {
+    // Ensure headers up to date when sheet already exists
+    const headers = [
+      'ID', 'แผนก ID', 'ชื่อแผนก', 'ปีงบประมาณ', 'เดือน', 'วันที่บันทึก',
+      's1_1', 's1_2', 's1_3', 's1_4', 's1_5',
+      's1_6_1', 's1_6_2', 's1_6_3', 's1_6_4', 'pressureUlcerRate',
+      's1_7', 's1_8', 's1_9', 's1_10',
+      's2_1', 's2_2', 'readmissionRate',
+      's3_1', 'daysInMonth', 'averageLOS',
+      's4_a', 's4_b', 's4_c', 'rnHr', 'auxHr', 'ratioRnAux', 'actualHPPD', 'productivity',
+      's5_1', 's6_1', 's6_2',
+      's7_1', 's7_2', 's7_3',
+      's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
+      's9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness',
+      'icu_unplannedReturn3Days', 'icu_unplan_med_male', 'icu_unplan_med_female', 'icu_unplan_surg_male', 'icu_unplan_surg_female',
+      'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro',
+      'หมายเหตุ'
+    ];
+
+    const currentHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    if (currentHeaders.length < headers.length || headers.some((h, idx) => currentHeaders[idx] !== h)) {
+      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    }
   }
-  
+
   return sheet;
 }
 
@@ -179,7 +208,14 @@ function saveQAData(data) {
       data.s9_1_1 || '', data.s9_1_2 || '', data.painTotal || '',
       data.s9_2_1 || '', data.s9_2_2 || '', data.s9_2_3 || '',
       data.s9_3_1 || '', data.s9_3_2 || '', data.recordCompleteness || '',
-      
+
+      // Section 9
+      data.icu_unplannedReturn3Days || '',
+      data.icu_unplan_med_male || '', data.icu_unplan_med_female || '',
+      data.icu_unplan_surg_male || '', data.icu_unplan_surg_female || '',
+      data.icu_unplan_ortho || '', data.icu_unplan_obgyne || '', data.icu_unplan_ped || '', data.icu_unplan_ent || '',
+      data.icu_unplan_uro || '', data.icu_unplan_neuro || '',
+
       data.note || ''
     ];
     
@@ -262,7 +298,19 @@ function updateExistingRow(sheet, rowIndex, data) {
     section8.forEach(val => {
       sheet.getRange(rowIndex, colIndex++).setValue(val || '');
     });
-    
+
+    // Section 9 (ICU-specific)
+    const section9 = [
+      data.icu_unplannedReturn3Days,
+      data.icu_unplan_med_male, data.icu_unplan_med_female,
+      data.icu_unplan_surg_male, data.icu_unplan_surg_female,
+      data.icu_unplan_ortho, data.icu_unplan_obgyne, data.icu_unplan_ped, data.icu_unplan_ent,
+      data.icu_unplan_uro, data.icu_unplan_neuro
+    ];
+    section9.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+
     // Note
     sheet.getRange(rowIndex, colIndex).setValue(data.note || '');
     
@@ -284,14 +332,14 @@ function getQAData(departmentId, fiscalYear, month) {
     // Trim input parameters
     const deptIdStr = String(departmentId).trim();
     const fiscalYearStr = String(fiscalYear).trim();
-    const monthStr = String(month).trim();
+    const monthStr = normalizeMonthValue(month);
     
     Logger.log('getQAData - Looking for: dept="' + deptIdStr + '", year="' + fiscalYearStr + '", month="' + monthStr + '"');
     
     for (let i = 1; i < data.length; i++) {
       const rowDeptId = String(data[i][1]).trim();
       const rowFiscalYear = String(data[i][3]).trim();
-      const rowMonth = String(data[i][4]).trim();
+      const rowMonth = normalizeMonthValue(data[i][4]);
       
       if (rowDeptId === deptIdStr && 
           rowFiscalYear === fiscalYearStr && 
@@ -337,8 +385,15 @@ function getQAData(departmentId, fiscalYear, month) {
           s9_1_1: data[i][45], s9_1_2: data[i][46], painTotal: data[i][47],
           s9_2_1: data[i][48], s9_2_2: data[i][49], s9_2_3: data[i][50],
           s9_3_1: data[i][51], s9_3_2: data[i][52], recordCompleteness: data[i][53],
-          
-          note: data[i][54]
+
+          // Section 9
+          icu_unplannedReturn3Days: data[i][54],
+          icu_unplan_med_male: data[i][55], icu_unplan_med_female: data[i][56],
+          icu_unplan_surg_male: data[i][57], icu_unplan_surg_female: data[i][58],
+          icu_unplan_ortho: data[i][59], icu_unplan_obgyne: data[i][60], icu_unplan_ped: data[i][61],
+          icu_unplan_ent: data[i][62], icu_unplan_uro: data[i][63], icu_unplan_neuro: data[i][64],
+
+          note: data[i][65]
         };
         
         return result;
@@ -434,8 +489,15 @@ function getYearData(departmentId, fiscalYear) {
           s9_1_1: data[i][45], s9_1_2: data[i][46], painTotal: data[i][47],
           s9_2_1: data[i][48], s9_2_2: data[i][49], s9_2_3: data[i][50],
           s9_3_1: data[i][51], s9_3_2: data[i][52], recordCompleteness: data[i][53],
-          
-          note: data[i][54]
+
+          // Section 9
+          icu_unplannedReturn3Days: data[i][54],
+          icu_unplan_med_male: data[i][55], icu_unplan_med_female: data[i][56],
+          icu_unplan_surg_male: data[i][57], icu_unplan_surg_female: data[i][58],
+          icu_unplan_ortho: data[i][59], icu_unplan_obgyne: data[i][60], icu_unplan_ped: data[i][61],
+          icu_unplan_ent: data[i][62], icu_unplan_uro: data[i][63], icu_unplan_neuro: data[i][64],
+
+          note: data[i][65]
         };
         
         result[rowMonth] = monthData;
@@ -604,6 +666,8 @@ function exportToCSV(departmentId, fiscalYear) {
       's9_1_1', 's9_1_2', 'painTotal',
       's9_2_1', 's9_2_2', 's9_2_3',
       's9_3_1', 's9_3_2', 'recordCompleteness',
+      'icu_unplannedReturn3Days', 'icu_unplan_med_male', 'icu_unplan_med_female', 'icu_unplan_surg_male', 'icu_unplan_surg_female',
+      'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro',
       'หมายเหตุ'
     ];
     
@@ -650,7 +714,7 @@ function getAllDepartmentsData(fiscalYear) {
       
       if (rowFiscalYear === fiscalYearStr) {
         const departmentId = String(data[i][1]).trim();
-        const month = String(data[i][4]).trim();
+        const month = normalizeMonthValue(data[i][4]);
         
         if (!result[departmentId]) {
           result[departmentId] = {};
