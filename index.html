@@ -646,118 +646,6 @@
             </div>
           </div>
 
-          <!-- Section 5: On-call & Unplanned Metrics -->
-          <div class="section-card">
-            <h3 class="section-header">
-              <i class="fas fa-phone mr-2 text-purple-600"></i>
-              5. On-call & Unplanned Metrics
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  5. จำนวนเวร On-call ที่จัดขึ้นโดยไม่ได้รับค่าตอบแทน
-                </label>
-                <input type="number" id="s5_1" step="0.01" 
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  6. จำนวน pt ที่เสียชีวิตโดยไม่คาดคิด
-                </label>
-                <input type="number" id="s6_1" step="0.01" 
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                  6. จำนวน pt ที่ Unplan ICU
-                </label>
-                <input type="number" id="s6_2" step="0.01" 
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 5.1: ICU-specific metrics -->
-          <div id="icuSection" class="section-card hidden">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="section-header mb-0">
-                <i class="fas fa-procedures mr-2 text-purple-600"></i>
-                ข้อมูลเฉพาะหอผู้ป่วยหนัก
-              </h3>
-              <span class="text-xs text-purple-700 bg-purple-50 px-3 py-1 rounded-full font-semibold">แสดงเฉพาะ ICU</span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">9. ย้าย ผป.กลับเข้า ICU อย่างไม่คาดคิดภายใน 3 วัน (ราย)</label>
-                <input type="number" id="icu_unplannedReturn3Days" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="med">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.1 อายุรกรรมชาย (Med ชาย) - ราย</label>
-                <input type="number" id="icu_unplan_med_male" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="med">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.2 อายุรกรรมหญิง (Med หญิง) - ราย</label>
-                <input type="number" id="icu_unplan_med_female" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.3 ศัลยกรรมชาย (SUR ชาย) - ราย</label>
-                <input type="number" id="icu_unplan_surg_male" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.4 ศัลยกรรมหญิง (SUR หญิง) - ราย</label>
-                <input type="number" id="icu_unplan_surg_female" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.5 กระดูกและข้อ (ORTHO) - ราย</label>
-                <input type="number" id="icu_unplan_ortho" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.6 สูติกรรม-นรีเวช (OBGYNE) - ราย</label>
-                <input type="number" id="icu_unplan_obgyne" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.7 หอผู้ป่วยหนักกุมารเวช (PED) - ราย</label>
-                <input type="number" id="icu_unplan_ped" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.8 หอผู้ป่วยโสต ศอ นาสิก (ENT) - ราย</label>
-                <input type="number" id="icu_unplan_ent" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.9 ศัลยกรรมระบบทางเดินปัสสาวะ (URO) - ราย</label>
-                <input type="number" id="icu_unplan_uro" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-
-              <div data-icu-visibility="full">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">10.10 ศัลยกรรมระบบประสาทและสมอง (NEURO) - ราย</label>
-                <input type="number" id="icu_unplan_neuro" step="1"
-                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
-              </div>
-            </div>
-          </div>
-
           <!-- Section 6: CPR -->
           <div class="section-card">
             <h3 class="section-header">
@@ -935,6 +823,85 @@
             </div>
           </div>
 
+          <!-- Section 10: ICU-specific metrics (appears after Pain Management) -->
+          <div id="icuSection" class="section-card hidden">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="section-header mb-0">
+                <i class="fas fa-procedures mr-2 text-purple-600"></i>
+                10. ข้อมูลเฉพาะหอผู้ป่วยหนัก
+              </h3>
+              <span class="text-xs text-purple-700 bg-purple-50 px-3 py-1 rounded-full font-semibold">แสดงเฉพาะ ICU</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">9. ย้าย ผป.กลับเข้า ICU อย่างไม่คาดคิดภายใน 3 วัน (ราย)</label>
+                <input type="number" id="icu_unplannedReturn3Days" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="med">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.1 อายุรกรรมชาย (Med ชาย) - ราย</label>
+                <input type="number" id="icu_unplan_med_male" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="med">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.2 อายุรกรรมหญิง (Med หญิง) - ราย</label>
+                <input type="number" id="icu_unplan_med_female" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.3 ศัลยกรรมชาย (SUR ชาย) - ราย</label>
+                <input type="number" id="icu_unplan_surg_male" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.4 ศัลยกรรมหญิง (SUR หญิง) - ราย</label>
+                <input type="number" id="icu_unplan_surg_female" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.5 กระดูกและข้อ (ORTHO) - ราย</label>
+                <input type="number" id="icu_unplan_ortho" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.6 สูติกรรม-นรีเวช (OBGYNE) - ราย</label>
+                <input type="number" id="icu_unplan_obgyne" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.7 หอผู้ป่วยหนักกุมารเวช (PED) - ราย</label>
+                <input type="number" id="icu_unplan_ped" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.8 หอผู้ป่วยโสต ศอ นาสิก (ENT) - ราย</label>
+                <input type="number" id="icu_unplan_ent" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.9 ศัลยกรรมระบบทางเดินปัสสาวะ (URO) - ราย</label>
+                <input type="number" id="icu_unplan_uro" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+
+              <div data-icu-visibility="full">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">10.10 ศัลยกรรมระบบประสาทและสมอง (NEURO) - ราย</label>
+                <input type="number" id="icu_unplan_neuro" step="1"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
           <!-- Additional Note -->
           <div class="section-card">
             <h3 class="section-header">
@@ -1049,6 +1016,7 @@
                 <tr>
                   <th class="px-4 py-3 text-left">เดือน</th>
                   <th class="px-4 py-3 text-left">สถานะ</th>
+                  <th class="px-4 py-3 text-left">บันทึกล่าสุด</th>
                   <th class="px-4 py-3 text-center">จัดการ</th>
                 </tr>
               </thead>
@@ -1389,6 +1357,20 @@
       recordCompleteness: "Record Completeness (%)",
       note: "หมายเหตุ"
     };
+
+    const computedFields = new Set([
+      'pressureUlcerRate',
+      'readmissionRate',
+      'daysInMonth',
+      'averageLOS',
+      'rnHr',
+      'auxHr',
+      'ratioRnAux',
+      'actualHPPD',
+      'productivity',
+      'painTotal',
+      'recordCompleteness'
+    ]);
 
     // Global variables
     let currentUser = null;
@@ -2187,8 +2169,11 @@
         { title: '3. Average LOS', color: 'border-yellow-500', columns: 'md:grid-cols-2', fields: ['s3_1', 'daysInMonth', 'averageLOS'] },
         { title: '4. Productivity', color: 'border-red-500', columns: 'md:grid-cols-3', fields: ['s4_a', 's4_b', 's4_c', 'rnHr', 'auxHr', 'ratioRnAux', 'actualHPPD', 'productivity'] },
         { title: '5. On-call & Unplanned', color: 'border-purple-500', columns: 'md:grid-cols-2', fields: ['s5_1', 's6_1', 's6_2'] },
+        { title: '7. CPR', color: 'border-pink-500', columns: 'md:grid-cols-3', fields: ['s7_1', 's7_2', 's7_3'] },
+        { title: '8. SOS Scores', color: 'border-indigo-500', columns: 'md:grid-cols-2', fields: ['s8_1', 's8_2', 's8_3', 's8_4', 's8_5'] },
+        { title: '9. Pain Management', color: 'border-blue-500', columns: 'md:grid-cols-2', fields: ['s9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness'] },
         {
-          title: '5.1 ข้อมูลเฉพาะหอผู้ป่วยหนัก',
+          title: '10. ข้อมูลเฉพาะหอผู้ป่วยหนัก',
           color: 'border-indigo-500',
           columns: 'md:grid-cols-2',
           requireIcu: true,
@@ -2197,10 +2182,7 @@
             ...(showMedBreakdown ? ['icu_unplan_med_male', 'icu_unplan_med_female'] : []),
             ...(showFullBreakdown ? ['icu_unplan_surg_male', 'icu_unplan_surg_female', 'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro'] : [])
           ]
-        },
-        { title: '7. CPR', color: 'border-pink-500', columns: 'md:grid-cols-3', fields: ['s7_1', 's7_2', 's7_3'] },
-        { title: '8. SOS Scores', color: 'border-indigo-500', columns: 'md:grid-cols-2', fields: ['s8_1', 's8_2', 's8_3', 's8_4', 's8_5'] },
-        { title: '9. Pain Management', color: 'border-blue-500', columns: 'md:grid-cols-2', fields: ['s9_1_1', 's9_1_2', 'painTotal', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2', 'recordCompleteness'] }
+        }
       ];
 
       let fieldsHtml = '<div class="space-y-6">';
@@ -2217,7 +2199,15 @@
           const label = fieldLabels[field] || field;
           const value = data[field] || '';
           fieldsHtml += `<div><label class="text-xs text-gray-600">${label}</label>`;
-          fieldsHtml += `<input type="number" name="${field}" value="${value}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+
+          if (computedFields.has(field)) {
+            fieldsHtml += `<input type="text" value="${value}" class="input-field w-full px-3 py-2 border rounded bg-gray-100 text-gray-700" disabled>`;
+            fieldsHtml += `<input type="hidden" name="${field}" value="${value}">`;
+          } else {
+            fieldsHtml += `<input type="number" name="${field}" value="${value}" step="0.01" class="input-field w-full px-3 py-2 border rounded">`;
+          }
+
+          fieldsHtml += `</div>`;
         });
 
         fieldsHtml += '</div></div>';
