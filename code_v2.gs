@@ -37,38 +37,33 @@ function initializeSheet() {
     // สร้าง Headers
     const headers = [
       'ID', 'แผนก ID', 'ชื่อแผนก', 'ปีงบประมาณ', 'เดือน', 'วันที่บันทึก',
-      
+
       // Section 1: Patient Safety (14 fields)
       's1_1', 's1_2', 's1_3', 's1_4', 's1_5',
       's1_6_1', 's1_6_2', 's1_6_3', 's1_6_4', 'pressureUlcerRate',
       's1_7', 's1_8', 's1_9', 's1_10',
-      
+
       // Section 2: Readmission Rate (3 fields)
       's2_1', 's2_2', 'readmissionRate',
-      
+
       // Section 3: Average Length of Stay (3 fields)
       's3_1', 'daysInMonth', 'averageLOS',
-      
+
       // Section 4: Productivity (9 fields)
-      's4_a', 's4_b', 's4_c', 
+      's4_a', 's4_b', 's4_c',
       'rnHr', 'auxHr', 'ratioRnAux', 'actualHPPD', 'productivity',
-      
+
       // Section 5: On-call & Unplanned (3 fields)
       's5_1', 's6_1', 's6_2',
-      
+
       // Section 6: CPR (3 fields)
       's7_1', 's7_2', 's7_3',
-      
+
       // Section 7: SOS Scores (5 fields)
       's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
-      
-      // Section 8: SOS Scores (5 fields)
-      's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
 
-      // Section 9: Unplanned return to ICU (ICU only)
+      // Section 8-10: ICU Metrics
       'icu_unplannedReturn3Days',
-
-      // Section 10: Unplan ICU breakdown (ICU only)
       'icu_unplan_med_male', 'icu_unplan_med_female',
       'icu_unplan_surg_male', 'icu_unplan_surg_female',
       'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped', 'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro',

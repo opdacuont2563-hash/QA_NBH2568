@@ -1372,6 +1372,72 @@
       'recordCompleteness'
     ]);
 
+    function getRequiredFieldIds() {
+      const baseFields = [
+        'fiscalYear', 'month',
+        's1_1', 's1_2', 's1_3', 's1_4', 's1_5',
+        's1_6_1', 's1_6_2', 's1_6_3', 's1_6_4',
+        's1_7', 's1_8', 's1_9', 's1_10',
+        's2_1', 's2_2',
+        's3_1',
+        's4_a', 's4_b', 's4_c',
+        's5_1', 's6_1', 's6_2',
+        's7_1', 's7_2', 's7_3',
+        's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
+        's9_1_1', 's9_1_2', 's9_2_1', 's9_2_2', 's9_2_3', 's9_3_1', 's9_3_2'
+      ];
+
+      const deptId = currentUser?.id || '';
+      const isIcu = ICU_DEPARTMENTS.includes(deptId);
+      const showMedBreakdown = ['DEPT007', 'DEPT008', 'DEPT021'].includes(deptId);
+      const showFullBreakdown = deptId === 'DEPT021';
+
+      if (isIcu) {
+        baseFields.push('icu_unplannedReturn3Days');
+
+        if (showMedBreakdown) {
+          baseFields.push('icu_unplan_med_male', 'icu_unplan_med_female');
+        }
+
+        if (showFullBreakdown) {
+          baseFields.push(
+            'icu_unplan_surg_male', 'icu_unplan_surg_female',
+            'icu_unplan_ortho', 'icu_unplan_obgyne', 'icu_unplan_ped',
+            'icu_unplan_ent', 'icu_unplan_uro', 'icu_unplan_neuro'
+          );
+        }
+      }
+
+      return baseFields;
+    }
+
+    function validateForm() {
+      const requiredIds = getRequiredFieldIds();
+
+      const missing = requiredIds.find(id => {
+        const el = document.getElementById(id);
+        if (!el) return false;
+        return (el.value || '').toString().trim() === '';
+      });
+
+      if (missing) {
+        const el = document.getElementById(missing);
+        const label = fieldLabels[missing] || missing;
+
+        if (el) {
+          el.classList.add('ring-2', 'ring-red-500');
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+          setTimeout(() => el.classList.remove('ring-2', 'ring-red-500'), 2000);
+        }
+
+        showAlert(`กรุณากรอกข้อมูลให้ครบ: ${label}`, 'error');
+        return false;
+      }
+
+      return true;
+    }
+
     // Global variables
     let currentUser = null;
     let currentEditId = null;
@@ -1654,6 +1720,10 @@
     });
 
     function saveData() {
+      if (!validateForm()) {
+        return;
+      }
+
       showLoading();
       
       const fiscalYear = document.getElementById('fiscalYear').value;
