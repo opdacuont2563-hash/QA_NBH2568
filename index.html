@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบบันทึกข้อมูล QA - โรงพยาบาลหนองบัวลำภู</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card-shadow {
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .tab-active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .tab-inactive {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .tab-inactive:hover {
+      background: #e5e7eb;
+    }
+
+    .input-field {
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .calculated-field {
+      background: #f0f9ff;
+      border: 2px solid #3b82f6;
+      font-weight: 600;
+      color: #1e40af;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    }
+
+    .section-header {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .loading {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      color: #065f46;
+    }
+
+    .alert-warning {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      color: #92400e;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+    }
+
+    .formula-box {
+      background: #fef3c7;
+      border: 2px dashed #f59e0b;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    .result-card {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .result-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 12px 0;
+    }
+
+    .remarks-box {
+      background: #f0fdf4;
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    /* Admin Dashboard Styles */
+    .card-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card {
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      transition: all 0.5s ease;
+    }
+
+    .progress-fill {
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  
+  <!-- Login Screen -->
+  <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl card-shadow w-full max-w-md p-8">
+      <div class="text-center mb-8">
+        <div class="bg-gradient-to-r from-purple-500 to-indigo-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-hospital text-white text-3xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">ระบบบันทึกข้อมูล QA</h1>
+        <p class="text-gray-600">โรงพยาบาลหนองบัวลำภู</p>
+      </div>
+
+      <!-- User Type Selection -->
+      <div class="mb-6">
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1">
+          <button type="button" id="userModeBtn" onclick="switchLoginMode('user')" 
+            class="flex-1 py-3 rounded-lg font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md">
+            <i class="fas fa-user mr-2"></i>ผู้ใช้งาน
+          </button>
+          <button type="button" id="adminModeBtn" onclick="switchLoginMode('admin')" 
+            class="flex-1 py-3 rounded-lg font-semibold transition bg-transparent text-gray-700 hover:bg-gray-200">
+            <i class="fas fa-user-shield mr-2"></i>ผู้ดูแลระบบ
+          </button>
+        </div>
+      </div>
+
+      <!-- User Login Form -->
+      <form id="loginForm" class="space-y-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            <i class="fas fa-building mr-2"></i>เลือกแผนก
+          </label>
+          <select id="departmentSelect" required 
+            class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+            <option value="">-- เลือกแผนก --</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            <i class="fas fa-lock mr-2"></i>รหัสผ่าน
+          </label>
+          <input type="password" id="passwordInput" required
+            class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+            placeholder="กรอกรหัสผ่าน">
+        </div>
+
+        <button type="submit" class="btn-primary w-full py-3 rounded-lg text-white font-semibold">
+          <i class="fas fa-sign-in-alt mr-2"></i>เข้าสู่ระบบ
+        </button>
+      </form>
+
+      <!-- Admin Login Form (Hidden by default) -->
+      <form id="adminLoginForm" class="space-y-6 hidden">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            <i class="fas fa-user mr-2"></i>Username
+          </label>
+          <input type="text" id="adminUsername" required
+            class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+            placeholder="admin">
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            <i class="fas fa-lock mr-2"></i>Password
+          </label>
+          <input type="password" id="adminPassword" required
+            class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+            placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn-primary w-full py-3 rounded-lg text-white font-semibold">
+          <i class="fas fa-sign-in-alt mr-2"></i>เข้าสู่ระบบ Admin
+        </button>
+      </form>
+
+      <div id="loginError" class="hidden mt-4 p-3 alert-error rounded-lg">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <span id="loginErrorMsg"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Screen -->
+  <div id="mainScreen" class="hidden min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+              <i class="fas fa-hospital text-2xl"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold">ระบบบันทึกข้อมูล QA</h1>
+              <p class="text-purple-100 text-sm">โรงพยาบาลหนองบัวลำภู</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="text-right">
+              <p class="text-sm opacity-90">แผนก</p>
+              <p class="font-semibold" id="currentDepartment"></p>
+            </div>
+            <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+              <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <div class="bg-white shadow-md">
+      <div class="container mx-auto px-4">
+        <div class="flex space-x-2">
+          <button onclick="showTab('entry')" id="entryTab" 
+            class="tab-active px-6 py-4 font-semibold rounded-t-lg transition">
+            <i class="fas fa-edit mr-2"></i>บันทึกข้อมูล
+          </button>
+          <button onclick="showTab('view')" id="viewTab" 
+            class="tab-inactive px-6 py-4 font-semibold rounded-t-lg transition">
+            <i class="fas fa-table mr-2"></i>ตารางแสดงข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="container mx-auto px-4 py-8">
+      
+      <!-- Entry Tab -->
+      <div id="entryContent" class="space-y-6">
+        <!-- Period Selection -->
+        <div class="bg-white rounded-xl card-shadow p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            <i class="fas fa-calendar-alt mr-2 text-purple-600"></i>เลือกงบประมาณและเดือน
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-gray-700 font-semibold mb-2">ปีงบประมาณ พ.ศ.</label>
+              <select id="fiscalYear" onchange="loadDataForPeriod()" 
+                class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="2568">2568</option>
+                <option value="2569">2569</option>
+                <option value="2570">2570</option>
+                <option value="2571">2571</option>
+                <option value="2572">2572</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700 font-semibold mb-2">เดือน</label>
+              <select id="month" onchange="loadDataForPeriod()" 
+                class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="ตุลาคม">ตุลาคม</option>
+                <option value="พฤศจิกายน">พฤศจิกายน</option>
+                <option value="ธันวาคม">ธันวาคม</option>
+                <option value="มกราคม">มกราคม</option>
+                <option value="กุมภาพันธ์">กุมภาพันธ์</option>
+                <option value="มีนาคม">มีนาคม</option>
+                <option value="เมษายน">เมษายน</option>
+                <option value="พฤษภาคม">พฤษภาคม</option>
+                <option value="มิถุนายน">มิถุนายน</option>
+                <option value="กรกฎาคม">กรกฎาคม</option>
+                <option value="สิงหาคม">สิงหาคม</option>
+                <option value="กันยายน">กันยายน</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="loadDataForPeriod()" 
+                class="btn-primary w-full py-3 rounded-lg text-white font-semibold">
+                <i class="fas fa-search mr-2"></i>โหลดข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Entry Form -->
+        <form id="dataEntryForm" class="space-y-6">
+          
+          <!-- Section 1: Patient Safety -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-shield-alt mr-2 text-purple-600"></i>
+              1. ความปลอดภัยของผู้ใช้บริการ
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.1 จำนวนอุบัติการณ์การระบุตัว ผป.ผิดคน
+                </label>
+                <input type="number" id="s1_1" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.2 จำนวนอุบัติการณ์ให้การรักษาพยาบาลผิดคน
+                </label>
+                <input type="number" id="s1_2" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.3 จำนวนอุบัติการณ์ความผิดพลาดในการบริหารยา (Drug Admin Error) ตั้งแต่ระดับ C ขึ้นไป
+                </label>
+                <input type="number" id="s1_3" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.4 จำนวนอุบัติการณ์ความผิดพลาดในการให้เลือดและ/หรือส่วนประกอบของเลือด
+                </label>
+                <input type="number" id="s1_4" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.5 จำนวนอุบัติการณ์การตายอย่างไม่คาดคิด
+                </label>
+                <input type="number" id="s1_5" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+
+            <!-- Subsection 1.6: Pressure Ulcer -->
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+              <h4 class="font-bold text-gray-800 mb-4">1.6 ตัวชี้วัดแผลกดทับ</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    1.6.1 จำนวนผู้ป่วยเกิดแผลกดทับรายใหม่ stage 2
+                  </label>
+                  <input type="number" id="s1_6_1" step="0.01" oninput="calculatePressureUlcerRate()"
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    1.6.2 จำนวนผู้ป่วยเสี่ยงในเวรบ่าย
+                  </label>
+                  <input type="number" id="s1_6_2" step="0.01" 
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    1.6.3 จำนวนผู้ป่วยเกิดแผลกดทับรายใหม่
+                  </label>
+                  <input type="number" id="s1_6_3" step="0.01" 
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    1.6.4 จำนวนวันนอนรวมของผู้ป่วยกลุ่มเสี่ยงต่อการเป็นแผลกดทับ (ตลอดทั้งเดือน)
+                  </label>
+                  <input type="number" id="s1_6_4" step="0.01" oninput="calculatePressureUlcerRate()"
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-semibold text-blue-700 mb-2">
+                    <i class="fas fa-calculator mr-2"></i>อัตราการเกิดแผลกดทับ (Auto-calculated)
+                  </label>
+                  <input type="text" id="pressureUlcerRate" readonly
+                    class="calculated-field w-full px-4 py-2 rounded-lg">
+                  <div class="formula-box">
+                    <strong>สูตร:</strong> (1.6.1 / 1.6.4) × 1000
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Continue with other fields -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.7 จำนวนอุบัติการณ์การพลัดตกหกล้ม
+                </label>
+                <input type="number" id="s1_7" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.8 จำนวนอุบัติการณ์ ผป.บาดเจ็บจากการจัดท่า การผูกยึด การใช้อุปกรณ์และเครื่องมือ
+                </label>
+                <input type="number" id="s1_8" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.9 จำนวนอุบัติการณ์การเกิดอุบัติเหตุจากการปฏิบัติงานของบุคลากรฯ
+                </label>
+                <input type="number" id="s1_9" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.10 จำนวนยา/เวชภัณฑ์/อุปกรณ์ทางการแพทย์หมดอายุเหลือค้าง
+                </label>
+                <input type="number" id="s1_10" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Readmission Rate -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-redo mr-2 text-purple-600"></i>
+              2. อัตราการกลับเข้ารับการรักษาซ้ำ
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">
+              อัตราการกลับเข้ารับการรักษาซ้ำในโรงพยาบาล ภายใน 28 วันโดยไม่ได้วางแผนล่วงหน้า
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  2.1 จำนวน ผป. ที่กลับเข้ารับการรักษาซ้ำด้วยโรค/อาการเดิมภายใน 28 วัน
+                </label>
+                <input type="number" id="s2_1" step="0.01" oninput="calculateReadmissionRate()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  2.2 จำนวน ผป. ทั้งหมดในเดือนก่อนหน้านี้
+                </label>
+                <input type="number" id="s2_2" step="0.01" oninput="calculateReadmissionRate()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-blue-700 mb-2">
+                  <i class="fas fa-calculator mr-2"></i>อัตราการกลับเข้ารับการรักษาซ้ำ (%) (Auto-calculated)
+                </label>
+                <input type="text" id="readmissionRate" readonly
+                  class="calculated-field w-full px-4 py-2 rounded-lg">
+                <div class="formula-box">
+                  <strong>สูตร:</strong> (2.1 / 2.2) × 100
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Average Length of Stay -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-bed mr-2 text-purple-600"></i>
+              3. ระยะวันนอนเฉลี่ย
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  3.1 จำนวนวันนอนรวม
+                </label>
+                <input type="number" id="s3_1" step="0.01" oninput="calculateAverageLOS()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  จำนวนวันในเดือน (Auto-detected)
+                </label>
+                <input type="text" id="daysInMonth" readonly
+                  class="calculated-field w-full px-4 py-2 rounded-lg">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-blue-700 mb-2">
+                  <i class="fas fa-calculator mr-2"></i>ระยะวันนอนเฉลี่ย (Auto-calculated)
+                </label>
+                <input type="text" id="averageLOS" readonly
+                  class="calculated-field w-full px-4 py-2 rounded-lg">
+                <div class="formula-box">
+                  <strong>สูตร:</strong> 3.1 / จำนวนวันในเดือน
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Productivity & Staffing -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-chart-line mr-2 text-purple-600"></i>
+              4. ผลิตภาพและอัตรากำลัง (Productivity & Staffing)
+            </h3>
+
+            <!-- Result Card -->
+            <div class="result-card mb-6">
+              <p class="text-sm opacity-90">ผลิตภาพ (Productivity)</p>
+              <div class="result-value" id="productivityValue">0.00%</div>
+              <p class="text-sm mt-2">เกณฑ์คือ ≥80%</p>
+              <div class="mt-4 p-3 bg-white bg-opacity-20 rounded-lg text-left text-sm">
+                <strong>สูตรคำนวณ Productivity:</strong><br>
+                <code>(B × HPPD × 100) / RN hrs</code><br>
+                <span class="text-xs">(โดย RN hrs คือ จำนวน ชม.ที่ปฏิบัติงานจริง = 7 ชม.)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  4. A [Staff/Day] - จำนวน จนท. ขึ้นเวร (ไม่รวมหัวหน้าและ NA)
+                </label>
+                <input type="number" id="s4_a" step="0.01" oninput="calculateProductivity()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  5. B [Patient Days] - ผลรวมผู้ป่วย / Day
+                </label>
+                <input type="number" id="s4_b" step="0.01" oninput="calculateProductivity()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  7. TN, PN, AID - จำนวนรวม TN, PN และ AID
+                </label>
+                <input type="number" id="s4_c" step="0.01" oninput="calculateProductivity()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+
+            <!-- Calculated Fields -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 p-4 bg-blue-50 rounded-lg">
+              <div>
+                <label class="block text-xs font-semibold text-blue-700 mb-1">
+                  RN hr (A × 7)
+                </label>
+                <input type="text" id="rnHr" readonly
+                  class="calculated-field w-full px-3 py-2 rounded text-sm">
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-blue-700 mb-1">
+                  Auxiliary hr ((A+C) × 7)
+                </label>
+                <input type="text" id="auxHr" readonly
+                  class="calculated-field w-full px-3 py-2 rounded text-sm">
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-blue-700 mb-1">
+                  Ratio RN/Aux
+                </label>
+                <input type="text" id="ratioRnAux" readonly
+                  class="calculated-field w-full px-3 py-2 rounded text-sm">
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-blue-700 mb-1">
+                  Actual HPPD
+                </label>
+                <input type="text" id="actualHPPD" readonly
+                  class="calculated-field w-full px-3 py-2 rounded text-sm">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: On-call & Unplanned Metrics -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-phone mr-2 text-purple-600"></i>
+              5. On-call & Unplanned Metrics
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  5. จำนวนเวร On-call ที่จัดขึ้นโดยไม่ได้รับค่าตอบแทน
+                </label>
+                <input type="number" id="s5_1" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  6. จำนวน pt ที่เสียชีวิตโดยไม่คาดคิด
+                </label>
+                <input type="number" id="s6_1" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  6. จำนวน pt ที่ Unplan ICU
+                </label>
+                <input type="number" id="s6_2" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 6: CPR -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-heartbeat mr-2 text-purple-600"></i>
+              7. CPR
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  จำนวน pt. CPR
+                </label>
+                <input type="number" id="s7_1" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  จำนวนครั้งที่ CPR ทั้งหมด
+                </label>
+                <input type="number" id="s7_2" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  จำนวนครั้ง CPR สำเร็จ
+                </label>
+                <input type="number" id="s7_3" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 7: SOS Scores -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-exclamation-triangle mr-2 text-purple-600"></i>
+              8. SOS Scores
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  8.1 จำนวนผู้ป่วยที่ได้รับการเฝ้าระวังอาการฯ ทั้งหมด
+                </label>
+                <input type="number" id="s8_1" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  8.2 จำนวนผู้ป่วยที่ได้รับการประเมินล่าช้า
+                </label>
+                <input type="number" id="s8_2" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  8.3 จำนวนครั้งที่ผู้ป่วยที่ได้รับการประเมินล่าช้า
+                </label>
+                <input type="number" id="s8_3" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  8.4 จำนวนผู้ป่วยที่ได้รับการเฝ้าระวังอาการไม่สอดคล้องกับความรุนแรง
+                </label>
+                <input type="number" id="s8_4" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  8.5 จำนวนครั้งที่เฝ้าระวังอาการผู้ป่วยไม่สอดคล้องกับความรุนแรง
+                </label>
+                <input type="number" id="s8_5" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 8: Pain Management -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-procedures mr-2 text-purple-600"></i>
+              9. การจัดการความปวด (Pain Management)
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.1 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวด (โดยการใช้ยา)
+                </label>
+                <input type="number" id="s9_1_1" step="0.01" oninput="calculatePainTotal()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  1.2 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวด (โดยการไม่ใช้ยา)
+                </label>
+                <input type="number" id="s9_1_2" step="0.01" oninput="calculatePainTotal()"
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-blue-700 mb-2">
+                  <i class="fas fa-calculator mr-2"></i>Total (Auto-sum)
+                </label>
+                <input type="text" id="painTotal" readonly
+                  class="calculated-field w-full px-4 py-2 rounded-lg">
+                <div class="formula-box">
+                  <strong>สูตร:</strong> 1.1 + 1.2
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  2.1 Acute Pain
+                </label>
+                <input type="number" id="s9_2_1" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  2.2 Chronic Pain
+                </label>
+                <input type="number" id="s9_2_2" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  2.3 Palliative Care Pain Management
+                </label>
+                <input type="number" id="s9_2_3" step="0.01" 
+                  class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              </div>
+            </div>
+
+            <div class="p-4 bg-green-50 rounded-lg">
+              <h4 class="font-bold text-gray-800 mb-4">3. ร้อยละความครบถ้วน (Completeness of Record)</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    3.1 จำนวนครั้งของผู้ป่วยที่มีการบันทึกการจัดการความปวดในเวชระเบียน
+                  </label>
+                  <input type="number" id="s9_3_1" step="0.01" oninput="calculateRecordCompleteness()"
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    3.2 จำนวนครั้งของผู้ป่วยที่ได้รับการจัดการความปวดทั้งหมด
+                  </label>
+                  <input type="number" id="s9_3_2" step="0.01" oninput="calculateRecordCompleteness()"
+                    class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-semibold text-blue-700 mb-2">
+                    <i class="fas fa-calculator mr-2"></i>ร้อยละความครบถ้วน (%) (Auto-calculated)
+                  </label>
+                  <input type="text" id="recordCompleteness" readonly
+                    class="calculated-field w-full px-4 py-2 rounded-lg">
+                  <div class="formula-box">
+                    <strong>สูตร:</strong> (3.1 / 3.2) × 100
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Note -->
+          <div class="section-card">
+            <h3 class="section-header">
+              <i class="fas fa-comment mr-2 text-purple-600"></i>
+              หมายเหตุ
+            </h3>
+            <textarea id="note" rows="3"
+              class="input-field w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+              placeholder="กรอกหมายเหตุเพิ่มเติม..."></textarea>
+          </div>
+
+          <!-- Remarks -->
+          <div class="remarks-box">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">
+              <i class="fas fa-info-circle mr-2"></i>หมายเหตุ (Definitions)
+            </h3>
+            <div class="space-y-3 text-sm text-gray-700">
+              <div class="p-3 bg-white rounded-lg">
+                <strong>RN hr:</strong> คือ จำนวนผลรวม RN ในแต่ละเวร ในวันนั้นๆ 
+                (เช่น เวรดึก 1 + เวรบ่าย 2 + เวรเช้า 2 = 5) แล้วนำมาคูณ <strong>7 ชม.</strong>
+              </div>
+              
+              <div class="p-3 bg-white rounded-lg">
+                <strong>Auxiliary hr:</strong> คือ จำนวนผลรวม RN, TN, PN และ AID ในแต่ละเวร 
+                (เช่น เวรดึก 2 + เวรบ่าย 2 + เวรเช้า 2 = 6) แล้วนำมาคูณ <strong>7 ชม.</strong>
+              </div>
+              
+              <div class="p-3 bg-white rounded-lg">
+                <strong>A [Staff/Day]:</strong> คือ ผลรวม Staff ต่อวัน ไม่รวมหัวหน้าและผู้ช่วยเหลือคนไข้
+              </div>
+              
+              <div class="p-3 bg-white rounded-lg">
+                <strong>B [Patient Days]:</strong> คือ ยอดผลรวมผู้ป่วย ดึก เช้า บ่าย ของแต่ละวัน
+              </div>
+              
+              <div class="p-3 bg-white rounded-lg">
+                <strong>เกณฑ์ผู้ป่วยกลุ่มเสี่ยงต่อการเกิดแผลกดทับ</strong> 
+                (Braden Score ≤ 16 หรือ &lt;18 ในผู้ป่วยอายุ 60+):
+                <ol class="list-decimal ml-6 mt-2 space-y-1">
+                  <li>ผู้ป่วยสูงอายุที่เสี่ยงตามดุลยพินิจ</li>
+                  <li>ผู้ป่วยไม่รู้สึกตัว ระดับความรู้สึกตัวลดลง</li>
+                  <li>ผู้ป่วยหลังผ่าตัดไม่รู้สึกตัวหลังผ่าตัด</li>
+                  <li>ถูกจำกัดการเคลื่อนไหว ใส่เครื่องดึงถ่วงกระดูก ผูกมัด</li>
+                  <li>ได้รับการทำหัตถการเป็นเวลานาน</li>
+                  <li>ใส่เครื่องช่วยหายใจ</li>
+                  <li>ผู้ป่วยที่มีไข้สูง ผิวหนังเปียกชื้น</li>
+                  <li>ผู้ป่วยที่ภาวะกลั้นอุจจาระ/ปัสสาวะไม่ได้</li>
+                  <li>ผู้ป่วยที่ผอมมากหรืออ้วนมากไม่สามารถเคลื่อนไหวร่างกายได้ด้วยตนเอง</li>
+                  <li>อัมพาต ติดเตียง</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex space-x-4">
+            <button type="submit" class="btn-primary flex-1 py-4 rounded-lg text-white font-semibold text-lg">
+              <i class="fas fa-save mr-2"></i>บันทึกข้อมูล
+            </button>
+            <button type="button" onclick="clearForm()" 
+              class="bg-gray-500 hover:bg-gray-600 flex-1 py-4 rounded-lg text-white font-semibold text-lg transition">
+              <i class="fas fa-eraser mr-2"></i>ล้างข้อมูล
+            </button>
+          </div>
+        </form>
+
+        <!-- Alert Messages -->
+        <div id="alertMessage" class="hidden"></div>
+      </div>
+
+      <!-- View Tab -->
+      <div id="viewContent" class="hidden space-y-6">
+        <!-- Year Selection -->
+        <div class="bg-white rounded-xl card-shadow p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-calendar-check mr-2 text-purple-600"></i>เลือกปีงบประมาณ
+          </h2>
+          <div class="flex items-center space-x-4">
+            <select id="viewFiscalYear" onchange="loadYearData()" 
+              class="input-field px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+              <option value="2568">2568</option>
+              <option value="2569">2569</option>
+              <option value="2570">2570</option>
+              <option value="2571">2571</option>
+              <option value="2572">2572</option>
+            </select>
+            <button onclick="loadYearData()" 
+              class="btn-primary px-6 py-3 rounded-lg text-white font-semibold">
+              <i class="fas fa-sync-alt mr-2"></i>โหลดข้อมูล
+            </button>
+          </div>
+        </div>
+
+        <!-- Month Status Overview -->
+        <div class="bg-white rounded-xl card-shadow p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            <i class="fas fa-chart-pie mr-2 text-purple-600"></i>สถานะข้อมูลรายเดือน
+          </h2>
+          <div id="monthStatus" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white rounded-xl card-shadow p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            <i class="fas fa-table mr-2 text-purple-600"></i>ตารางข้อมูลรายเดือน
+          </h2>
+          <div class="overflow-x-auto">
+            <table class="w-full" id="dataTable">
+              <thead class="gradient-bg text-white">
+                <tr>
+                  <th class="px-4 py-3 text-left">เดือน</th>
+                  <th class="px-4 py-3 text-left">สถานะ</th>
+                  <th class="px-4 py-3 text-center">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="dataTableBody">
+                <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-8 text-center">
+      <div class="loading mx-auto mb-4"></div>
+      <p class="text-gray-700 font-semibold">กำลังโหลดข้อมูล...</p>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div class="bg-white rounded-xl card-shadow max-w-6xl w-full max-h-[90vh] overflow-y-auto my-8">
+      <div class="gradient-bg text-white p-6 rounded-t-xl sticky top-0 z-10">
+        <h2 class="text-2xl font-bold">
+          <i class="fas fa-edit mr-2"></i>แก้ไขข้อมูล
+        </h2>
+        <p class="text-purple-100 mt-1" id="editModalTitle"></p>
+      </div>
+      <div class="p-6">
+        <form id="editForm">
+          <div id="editFormFields"></div>
+          
+          <div class="flex space-x-4 pt-4 border-t sticky bottom-0 bg-white">
+            <button type="submit" class="btn-primary flex-1 py-3 rounded-lg text-white font-semibold">
+              <i class="fas fa-save mr-2"></i>บันทึกการแก้ไข
+            </button>
+            <button type="button" onclick="closeEditModal()" 
+              class="bg-gray-500 hover:bg-gray-600 flex-1 py-3 rounded-lg text-white font-semibold transition">
+              <i class="fas fa-times mr-2"></i>ยกเลิก
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Screen -->
+  <div id="adminScreen" class="hidden min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+              <i class="fas fa-user-shield text-2xl"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+              <p class="text-purple-100 text-sm">ระบบจัดการและติดตามข้อมูล QA</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="text-right">
+              <p class="text-sm opacity-90">ผู้ดูแลระบบ</p>
+              <p class="font-semibold">Admin</p>
+            </div>
+            <button onclick="adminLogout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+              <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="bg-white shadow-md sticky top-16 z-40">
+      <div class="container mx-auto px-4">
+        <div class="flex space-x-2">
+          <button onclick="showAdminTab('overview')" id="overviewTab" 
+            class="tab-btn px-6 py-3 font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+            <i class="fas fa-chart-pie mr-2"></i>ภาพรวม
+          </button>
+          <button onclick="showAdminTab('department')" id="departmentTab" 
+            class="tab-btn px-6 py-3 font-semibold transition bg-transparent text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-building mr-2"></i>รายแผนก
+          </button>
+          <button onclick="showAdminTab('alerts')" id="alertsTab" 
+            class="tab-btn px-6 py-3 font-semibold transition bg-transparent text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-bell mr-2"></i>แจ้งเตือน
+            <span id="alertBadge" class="ml-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container mx-auto px-4 py-8">
+      
+      <!-- Overview Tab -->
+      <div id="overviewContent">
+        <!-- Year Selection -->
+        <div class="card mb-6 bg-white rounded-xl p-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-800">
+              <i class="fas fa-calendar-alt mr-2 text-purple-600"></i>เลือกปีงบประมาณ
+            </h2>
+            <div class="flex items-center space-x-4">
+              <select id="adminFiscalYear" onchange="loadAdminData()" 
+                class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="2568">2568</option>
+                <option value="2569">2569</option>
+                <option value="2570">2570</option>
+              </select>
+              <button onclick="loadAdminData()" 
+                class="btn-primary px-6 py-2 rounded-lg font-semibold">
+                <i class="fas fa-sync-alt mr-2"></i>โหลดข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div class="card-gradient text-white rounded-xl p-6">
+            <div class="flex items-center justify-between">
+              <i class="fas fa-building text-3xl opacity-80"></i>
+              <div class="text-right">
+                <p class="text-sm opacity-90">จำนวนแผนกทั้งหมด</p>
+                <p class="text-4xl font-bold" id="totalDepts">21</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-white border-2 border-green-500 rounded-xl p-6">
+            <div class="flex items-center justify-between">
+              <i class="fas fa-check-circle text-3xl text-green-600"></i>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">ครบถ้วน 12 เดือน</p>
+                <p class="text-4xl font-bold text-green-600" id="completeDepts">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-white border-2 border-yellow-500 rounded-xl p-6">
+            <div class="flex items-center justify-between">
+              <i class="fas fa-exclamation-triangle text-3xl text-yellow-600"></i>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">ข้อมูลไม่ครบ</p>
+                <p class="text-4xl font-bold text-yellow-600" id="incompleteDepts">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-white border-2 border-red-500 rounded-xl p-6">
+            <div class="flex items-center justify-between">
+              <i class="fas fa-times-circle text-3xl text-red-600"></i>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">ยังไม่มีข้อมูล</p>
+                <p class="text-4xl font-bold text-red-600" id="emptyDepts">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="card bg-white rounded-xl p-6 mb-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-chart-bar mr-2 text-purple-600"></i>ความสมบูรณ์ของข้อมูลโดยรวม
+          </h3>
+          <div class="mb-4">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+              <span>ความสมบูรณ์ทั้งหมด</span>
+              <span id="overallPercentText">0%</span>
+            </div>
+            <div class="progress-bar bg-gray-200 rounded-full h-6 overflow-hidden">
+              <div class="progress-fill bg-gradient-to-r from-green-500 to-green-600 h-full flex items-center justify-center text-white text-sm font-semibold transition-all duration-500" id="overallProgress" style="width: 0%">0%</div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-600">
+            <i class="fas fa-info-circle mr-2"></i>
+            คำนวณจาก: จำนวนข้อมูลที่มี / (21 แผนก × 12 เดือน) × 100
+          </p>
+        </div>
+
+        <!-- Department Grid -->
+        <div class="card bg-white rounded-xl p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-th-large mr-2 text-purple-600"></i>สถานะแต่ละแผนก
+          </h3>
+          <div id="deptGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Department Tab -->
+      <div id="departmentContent" class="hidden">
+        <div class="card bg-white rounded-xl p-6 mb-6">
+          <div class="flex items-center space-x-4">
+            <div class="flex-1">
+              <label class="block text-gray-700 font-semibold mb-2">เลือกแผนก</label>
+              <select id="selectedDept" onchange="loadDeptData()" 
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="">-- เลือกแผนก --</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="block text-gray-700 font-semibold mb-2">ปีงบประมาณ</label>
+              <select id="deptFiscalYear" onchange="loadDeptData()" 
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="2568">2568</option>
+                <option value="2569">2569</option>
+                <option value="2570">2570</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="loadDeptData()" 
+                class="btn-primary px-6 py-3 rounded-lg font-semibold">
+                <i class="fas fa-search mr-2"></i>ดูข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="deptDataDisplay">
+          <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-search text-6xl mb-4 opacity-50"></i>
+            <p class="text-lg">กรุณาเลือกแผนกเพื่อดูข้อมูล</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Tab -->
+      <div id="alertsContent" class="hidden">
+        <div class="card bg-white rounded-xl p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-bell mr-2 text-yellow-600"></i>รายการแจ้งเตือน
+          </h2>
+          <div id="alertsList">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Department credentials
+    const departments = [
+      { id: "DEPT001", name: "หอผู้ป่วยอายุรกรรมชาย", password: "MED_M2568" },
+      { id: "DEPT002", name: "หอผู้ป่วยอายุรกรรมหญิง", password: "MED_F2568" },
+      { id: "DEPT003", name: "หอผู้ป่วยจิตเวช", password: "PSY2568" },
+      { id: "DEPT004", name: "หอผู้ป่วยพิเศษรวมน้ำใจ", password: "SPEC_NJ2568" },
+      { id: "DEPT005", name: "หอผู้ป่วยศัลยกรรมชาย", password: "SURG_M2568" },
+      { id: "DEPT006", name: "หอผู้ป่วยศัลยกรรมหญิง", password: "SURG_F2568" },
+      { id: "DEPT007", name: "หอผู้ป่วยหนักอายุรกรรมชั้น 1(ICU-MED_1)", password: "ICUMED12568" },
+      { id: "DEPT008", name: "หอผู้ป่วยหนักอายุรกรรมชั้น 2(ICU-MED_2)", password: "ICUMED22568" },
+      { id: "DEPT009", name: "หอผู้ป่วยกระดูกและข้อ", password: "ORTHO2568" },
+      { id: "DEPT010", name: "หอผู้ป่วยพิเศษอายุรกรรมชั้น4", password: "SPECMED42568" },
+      { id: "DEPT011", name: "หอผู้ป่วยพิเศษศัลยกรรมชั้น4", password: "SPECSURG42568" },
+      { id: "DEPT012", name: "หอผู้ป่วยกุมารเวช", password: "PEDS2568" },
+      { id: "DEPT013", name: "หอผู้ป่วยอภิบาลสงฆ์", password: "MONK2568" },
+      { id: "DEPT014", name: "หอผู้ป่วยโสต ศอ นาสิก", password: "ENT2568" },
+      { id: "DEPT015", name: "หอผู้ป่วยพิเศษสูติ-นรีเวช ชั้น5", password: "SPECOBGYN52568" },
+      { id: "DEPT016", name: "หอผู้ป่วยพิเศษสูติ-นรีเวช ชั้น4", password: "SPECOBGYN42568" },
+      { id: "DEPT017", name: "หอผู้ป่วยพิเศษกุมารเวช", password: "SPECPEDS2568" },
+      { id: "DEPT018", name: "หอผู้ป่วยศัลยกรรมระบบประสาทและสมอง", password: "NEURO2568" },
+      { id: "DEPT019", name: "หอผู้ป่วยหนักกุมารเวช(NICU)", password: "NICU2568" },
+      { id: "DEPT020", name: "หอผู้ป่วยสูติ-นรีเวช (PP)", password: "PP2568" },
+      { id: "DEPT021", name: "หอผู้ป่วยหนักรวม(ICU_รวม)", password: "ICU2568" }
+    ];
+
+    // Global variables
+    let currentUser = null;
+    let currentEditId = null;
+    let isAdminMode = false;
+    const ADMIN_CREDENTIALS = {
+      username: 'admin',
+      password: 'admin@nbl2568'
+    };
+
+    // Switch login mode between User and Admin
+    function switchLoginMode(mode) {
+      const userBtn = document.getElementById('userModeBtn');
+      const adminBtn = document.getElementById('adminModeBtn');
+      const userForm = document.getElementById('loginForm');
+      const adminForm = document.getElementById('adminLoginForm');
+
+      if (mode === 'admin') {
+        // Switch to Admin mode
+        isAdminMode = true;
+        userBtn.className = 'flex-1 py-3 rounded-lg font-semibold transition bg-transparent text-gray-700 hover:bg-gray-200';
+        adminBtn.className = 'flex-1 py-3 rounded-lg font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md';
+        userForm.classList.add('hidden');
+        adminForm.classList.remove('hidden');
+      } else {
+        // Switch to User mode
+        isAdminMode = false;
+        userBtn.className = 'flex-1 py-3 rounded-lg font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md';
+        adminBtn.className = 'flex-1 py-3 rounded-lg font-semibold transition bg-transparent text-gray-700 hover:bg-gray-200';
+        userForm.classList.remove('hidden');
+        adminForm.classList.add('hidden');
+      }
+    }
+
+    // Initialize
+    window.onload = function() {
+      populateDepartmentSelect();
+      updateDaysInMonth();
+    };
+
+    function populateDepartmentSelect() {
+      const select = document.getElementById('departmentSelect');
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept.id;
+        option.textContent = dept.name;
+        select.appendChild(option);
+      });
+    }
+
+    // Login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const deptId = document.getElementById('departmentSelect').value;
+      const password = document.getElementById('passwordInput').value;
+      
+      const dept = departments.find(d => d.id === deptId && d.password === password);
+      
+      if (dept) {
+        currentUser = dept;
+        document.getElementById('currentDepartment').textContent = dept.name;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainScreen').classList.remove('hidden');
+        loadDataForPeriod();
+      } else {
+        showLoginError('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+      }
+    });
+
+    // Admin Login Handler
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+      
+      if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminScreen').classList.remove('hidden');
+        loadAdminData();
+      } else {
+        showLoginError('Username หรือ Password ไม่ถูกต้อง');
+      }
+    });
+
+    function showLoginError(message) {
+      const errorDiv = document.getElementById('loginError');
+      const errorMsg = document.getElementById('loginErrorMsg');
+      errorMsg.textContent = message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => errorDiv.classList.add('hidden'), 3000);
+    }
+
+    function logout() {
+      if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
+        currentUser = null;
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('mainScreen').classList.add('hidden');
+        document.getElementById('passwordInput').value = '';
+        clearForm();
+      }
+    }
+
+    // Tab switching
+    function showTab(tab) {
+      const entryTab = document.getElementById('entryTab');
+      const viewTab = document.getElementById('viewTab');
+      const entryContent = document.getElementById('entryContent');
+      const viewContent = document.getElementById('viewContent');
+
+      if (tab === 'entry') {
+        entryTab.classList.add('tab-active');
+        entryTab.classList.remove('tab-inactive');
+        viewTab.classList.remove('tab-active');
+        viewTab.classList.add('tab-inactive');
+        entryContent.classList.remove('hidden');
+        viewContent.classList.add('hidden');
+      } else {
+        viewTab.classList.add('tab-active');
+        viewTab.classList.remove('tab-inactive');
+        entryTab.classList.remove('tab-active');
+        entryTab.classList.add('tab-inactive');
+        viewContent.classList.remove('hidden');
+        entryContent.classList.add('hidden');
+        loadYearData();
+      }
+    }
+
+    // Calculation Functions
+    function getDaysInMonth() {
+      const month = document.getElementById('month').value;
+      const year = parseInt(document.getElementById('fiscalYear').value) - 543; // Convert to CE
+      
+      const monthDays = {
+        'ตุลาคม': 31, 'พฤศจิกายน': 30, 'ธันวาคม': 31,
+        'มกราคม': 31, 'กุมภาพันธ์': (year % 4 === 0) ? 29 : 28,
+        'มีนาคม': 31, 'เมษายน': 30, 'พฤษภาคม': 31,
+        'มิถุนายน': 30, 'กรกฎาคม': 31, 'สิงหาคม': 31, 'กันยายน': 30
+      };
+      
+      return monthDays[month] || 30;
+    }
+
+    function updateDaysInMonth() {
+      const days = getDaysInMonth();
+      document.getElementById('daysInMonth').value = days + ' วัน';
+      calculateAverageLOS();
+    }
+
+    function calculatePressureUlcerRate() {
+      const val1 = parseFloat(document.getElementById('s1_6_1').value) || 0;
+      const val4 = parseFloat(document.getElementById('s1_6_4').value) || 0;
+      
+      if (val4 > 0) {
+        const rate = (val1 / val4) * 1000;
+        document.getElementById('pressureUlcerRate').value = rate.toFixed(2);
+      } else {
+        document.getElementById('pressureUlcerRate').value = '0.00';
+      }
+    }
+
+    function calculateReadmissionRate() {
+      const val1 = parseFloat(document.getElementById('s2_1').value) || 0;
+      const val2 = parseFloat(document.getElementById('s2_2').value) || 0;
+      
+      if (val2 > 0) {
+        const rate = (val1 / val2) * 100;
+        document.getElementById('readmissionRate').value = rate.toFixed(2) + '%';
+      } else {
+        document.getElementById('readmissionRate').value = '0.00%';
+      }
+    }
+
+    function calculateAverageLOS() {
+      const totalDays = parseFloat(document.getElementById('s3_1').value) || 0;
+      const daysInMonth = getDaysInMonth();
+      
+      if (daysInMonth > 0) {
+        const average = totalDays / daysInMonth;
+        document.getElementById('averageLOS').value = average.toFixed(2);
+      } else {
+        document.getElementById('averageLOS').value = '0.00';
+      }
+    }
+
+    function calculateProductivity() {
+      const valA = parseFloat(document.getElementById('s4_a').value) || 0;
+      const valB = parseFloat(document.getElementById('s4_b').value) || 0;
+      const valC = parseFloat(document.getElementById('s4_c').value) || 0;
+      
+      // Calculate RN hr
+      const rnHr = valA * 7;
+      document.getElementById('rnHr').value = rnHr.toFixed(2);
+      
+      // Calculate Auxiliary hr
+      const auxHr = (valA + valC) * 7;
+      document.getElementById('auxHr').value = auxHr.toFixed(2);
+      
+      // Calculate Ratio
+      if (auxHr > 0) {
+        const ratio = rnHr / auxHr;
+        document.getElementById('ratioRnAux').value = ratio.toFixed(2);
+      } else {
+        document.getElementById('ratioRnAux').value = '0.00';
+      }
+      
+      // Calculate HPPD
+      if (valB > 0) {
+        const hppd = (valA * 7) / valB;
+        document.getElementById('actualHPPD').value = hppd.toFixed(2);
+        
+        // Calculate Productivity
+        if (rnHr > 0) {
+          const productivity = (valB * hppd * 100) / rnHr;
+          document.getElementById('productivityValue').textContent = productivity.toFixed(2) + '%';
+        } else {
+          document.getElementById('productivityValue').textContent = '0.00%';
+        }
+      } else {
+        document.getElementById('actualHPPD').value = '0.00';
+        document.getElementById('productivityValue').textContent = '0.00%';
+      }
+    }
+
+    function calculatePainTotal() {
+      const val1 = parseFloat(document.getElementById('s9_1_1').value) || 0;
+      const val2 = parseFloat(document.getElementById('s9_1_2').value) || 0;
+      
+      const total = val1 + val2;
+      document.getElementById('painTotal').value = total.toFixed(2);
+    }
+
+    function calculateRecordCompleteness() {
+      const val1 = parseFloat(document.getElementById('s9_3_1').value) || 0;
+      const val2 = parseFloat(document.getElementById('s9_3_2').value) || 0;
+      
+      if (val2 > 0) {
+        const completeness = (val1 / val2) * 100;
+        document.getElementById('recordCompleteness').value = completeness.toFixed(2) + '%';
+      } else {
+        document.getElementById('recordCompleteness').value = '0.00%';
+      }
+    }
+
+    // Form submission
+    document.getElementById('dataEntryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveData();
+    });
+
+    function saveData() {
+      showLoading();
+      
+      const fiscalYear = document.getElementById('fiscalYear').value;
+      const month = document.getElementById('month').value;
+      
+      const data = {
+        departmentId: currentUser.id,
+        departmentName: currentUser.name,
+        fiscalYear: fiscalYear,
+        month: month,
+        timestamp: new Date().toISOString(),
+        
+        // Section 1
+        s1_1: document.getElementById('s1_1').value || '',
+        s1_2: document.getElementById('s1_2').value || '',
+        s1_3: document.getElementById('s1_3').value || '',
+        s1_4: document.getElementById('s1_4').value || '',
+        s1_5: document.getElementById('s1_5').value || '',
+        s1_6_1: document.getElementById('s1_6_1').value || '',
+        s1_6_2: document.getElementById('s1_6_2').value || '',
+        s1_6_3: document.getElementById('s1_6_3').value || '',
+        s1_6_4: document.getElementById('s1_6_4').value || '',
+        pressureUlcerRate: document.getElementById('pressureUlcerRate').value || '',
+        s1_7: document.getElementById('s1_7').value || '',
+        s1_8: document.getElementById('s1_8').value || '',
+        s1_9: document.getElementById('s1_9').value || '',
+        s1_10: document.getElementById('s1_10').value || '',
+        
+        // Section 2
+        s2_1: document.getElementById('s2_1').value || '',
+        s2_2: document.getElementById('s2_2').value || '',
+        readmissionRate: document.getElementById('readmissionRate').value || '',
+        
+        // Section 3
+        s3_1: document.getElementById('s3_1').value || '',
+        daysInMonth: getDaysInMonth(),
+        averageLOS: document.getElementById('averageLOS').value || '',
+        
+        // Section 4
+        s4_a: document.getElementById('s4_a').value || '',
+        s4_b: document.getElementById('s4_b').value || '',
+        s4_c: document.getElementById('s4_c').value || '',
+        rnHr: document.getElementById('rnHr').value || '',
+        auxHr: document.getElementById('auxHr').value || '',
+        ratioRnAux: document.getElementById('ratioRnAux').value || '',
+        actualHPPD: document.getElementById('actualHPPD').value || '',
+        productivity: document.getElementById('productivityValue').textContent || '',
+        
+        // Section 5
+        s5_1: document.getElementById('s5_1').value || '',
+        s6_1: document.getElementById('s6_1').value || '',
+        s6_2: document.getElementById('s6_2').value || '',
+        
+        // Section 6
+        s7_1: document.getElementById('s7_1').value || '',
+        s7_2: document.getElementById('s7_2').value || '',
+        s7_3: document.getElementById('s7_3').value || '',
+        
+        // Section 7
+        s8_1: document.getElementById('s8_1').value || '',
+        s8_2: document.getElementById('s8_2').value || '',
+        s8_3: document.getElementById('s8_3').value || '',
+        s8_4: document.getElementById('s8_4').value || '',
+        s8_5: document.getElementById('s8_5').value || '',
+        
+        // Section 8
+        s9_1_1: document.getElementById('s9_1_1').value || '',
+        s9_1_2: document.getElementById('s9_1_2').value || '',
+        painTotal: document.getElementById('painTotal').value || '',
+        s9_2_1: document.getElementById('s9_2_1').value || '',
+        s9_2_2: document.getElementById('s9_2_2').value || '',
+        s9_2_3: document.getElementById('s9_2_3').value || '',
+        s9_3_1: document.getElementById('s9_3_1').value || '',
+        s9_3_2: document.getElementById('s9_3_2').value || '',
+        recordCompleteness: document.getElementById('recordCompleteness').value || '',
+        
+        note: document.getElementById('note').value || ''
+      };
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          hideLoading();
+          if (response.success) {
+            showAlert('บันทึกข้อมูลสำเร็จ!', 'success');
+            // Clear form after successful save
+            setTimeout(() => {
+              clearForm();
+              showAlert('พร้อมบันทึกข้อมูลใหม่', 'success');
+            }, 1500);
+          } else {
+            showAlert('เกิดข้อผิดพลาด: ' + response.message, 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showAlert('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+          console.error(error);
+        })
+        .saveQAData(data);
+    }
+
+    function loadDataForPeriod() {
+      showLoading();
+      
+      const fiscalYear = document.getElementById('fiscalYear').value;
+      const month = document.getElementById('month').value;
+      
+      updateDaysInMonth();
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          if (data) {
+            populateForm(data);
+            showAlert('โหลดข้อมูลสำเร็จ', 'success');
+          } else {
+            clearForm();
+            showAlert('ไม่พบข้อมูลสำหรับเดือนนี้', 'warning');
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showAlert('เกิดข้อผิดพลาดในการโหลดข้อมูล', 'error');
+          console.error(error);
+        })
+        .getQAData(currentUser.id, fiscalYear, month);
+    }
+
+    function populateForm(data) {
+      // Section 1
+      if (data.s1_1) document.getElementById('s1_1').value = data.s1_1;
+      if (data.s1_2) document.getElementById('s1_2').value = data.s1_2;
+      if (data.s1_3) document.getElementById('s1_3').value = data.s1_3;
+      if (data.s1_4) document.getElementById('s1_4').value = data.s1_4;
+      if (data.s1_5) document.getElementById('s1_5').value = data.s1_5;
+      if (data.s1_6_1) document.getElementById('s1_6_1').value = data.s1_6_1;
+      if (data.s1_6_2) document.getElementById('s1_6_2').value = data.s1_6_2;
+      if (data.s1_6_3) document.getElementById('s1_6_3').value = data.s1_6_3;
+      if (data.s1_6_4) document.getElementById('s1_6_4').value = data.s1_6_4;
+      if (data.s1_7) document.getElementById('s1_7').value = data.s1_7;
+      if (data.s1_8) document.getElementById('s1_8').value = data.s1_8;
+      if (data.s1_9) document.getElementById('s1_9').value = data.s1_9;
+      if (data.s1_10) document.getElementById('s1_10').value = data.s1_10;
+      
+      // Section 2
+      if (data.s2_1) document.getElementById('s2_1').value = data.s2_1;
+      if (data.s2_2) document.getElementById('s2_2').value = data.s2_2;
+      
+      // Section 3
+      if (data.s3_1) document.getElementById('s3_1').value = data.s3_1;
+      
+      // Section 4
+      if (data.s4_a) document.getElementById('s4_a').value = data.s4_a;
+      if (data.s4_b) document.getElementById('s4_b').value = data.s4_b;
+      if (data.s4_c) document.getElementById('s4_c').value = data.s4_c;
+      
+      // Section 5
+      if (data.s5_1) document.getElementById('s5_1').value = data.s5_1;
+      if (data.s6_1) document.getElementById('s6_1').value = data.s6_1;
+      if (data.s6_2) document.getElementById('s6_2').value = data.s6_2;
+      
+      // Section 6
+      if (data.s7_1) document.getElementById('s7_1').value = data.s7_1;
+      if (data.s7_2) document.getElementById('s7_2').value = data.s7_2;
+      if (data.s7_3) document.getElementById('s7_3').value = data.s7_3;
+      
+      // Section 7
+      if (data.s8_1) document.getElementById('s8_1').value = data.s8_1;
+      if (data.s8_2) document.getElementById('s8_2').value = data.s8_2;
+      if (data.s8_3) document.getElementById('s8_3').value = data.s8_3;
+      if (data.s8_4) document.getElementById('s8_4').value = data.s8_4;
+      if (data.s8_5) document.getElementById('s8_5').value = data.s8_5;
+      
+      // Section 8
+      if (data.s9_1_1) document.getElementById('s9_1_1').value = data.s9_1_1;
+      if (data.s9_1_2) document.getElementById('s9_1_2').value = data.s9_1_2;
+      if (data.s9_2_1) document.getElementById('s9_2_1').value = data.s9_2_1;
+      if (data.s9_2_2) document.getElementById('s9_2_2').value = data.s9_2_2;
+      if (data.s9_2_3) document.getElementById('s9_2_3').value = data.s9_2_3;
+      if (data.s9_3_1) document.getElementById('s9_3_1').value = data.s9_3_1;
+      if (data.s9_3_2) document.getElementById('s9_3_2').value = data.s9_3_2;
+      
+      if (data.note) document.getElementById('note').value = data.note;
+      
+      // Trigger calculations
+      calculatePressureUlcerRate();
+      calculateReadmissionRate();
+      calculateAverageLOS();
+      calculateProductivity();
+      calculatePainTotal();
+      calculateRecordCompleteness();
+    }
+
+    function clearForm() {
+      document.getElementById('dataEntryForm').reset();
+      document.getElementById('pressureUlcerRate').value = '';
+      document.getElementById('readmissionRate').value = '';
+      document.getElementById('averageLOS').value = '';
+      document.getElementById('rnHr').value = '';
+      document.getElementById('auxHr').value = '';
+      document.getElementById('ratioRnAux').value = '';
+      document.getElementById('actualHPPD').value = '';
+      document.getElementById('productivityValue').textContent = '0.00%';
+      document.getElementById('painTotal').value = '';
+      document.getElementById('recordCompleteness').value = '';
+      updateDaysInMonth();
+    }
+
+    // View Tab Functions
+    function loadYearData() {
+      showLoading();
+      
+      const fiscalYear = document.getElementById('viewFiscalYear').value;
+      
+      console.log('=== Loading Year Data ===');
+      console.log('Current User:', currentUser);
+      console.log('Department ID:', currentUser.id);
+      console.log('Department Name:', currentUser.name);
+      console.log('Fiscal Year:', fiscalYear);
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          console.log('=== Data Received ===');
+          console.log('Raw data:', data);
+          console.log('Data keys:', Object.keys(data));
+          console.log('Number of months:', Object.keys(data).length);
+          
+          // Debug: แสดงรายละเอียดแต่ละเดือน
+          Object.keys(data).forEach(month => {
+            console.log(`Month: ${month}`, data[month]);
+          });
+          
+          if (Object.keys(data).length === 0) {
+            showAlert('⚠️ ไม่พบข้อมูลสำหรับปีงบประมาณนี้\n\nกรุณาตรวจสอบ:\n1. แผนก: ' + currentUser.name + '\n2. รหัสแผนก: ' + currentUser.id + '\n3. ปีงบประมาณ: ' + fiscalYear, 'warning');
+          } else {
+            showAlert(`✓ โหลดข้อมูลสำเร็จ พบข้อมูล ${Object.keys(data).length} เดือน`, 'success');
+          }
+          
+          displayYearData(data);
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          console.error('=== Error Loading Data ===');
+          console.error('Error:', error);
+          showAlert('❌ เกิดข้อผิดพลาดในการโหลดข้อมูล\n\nError: ' + error.message, 'error');
+        })
+        .getYearData(currentUser.id, fiscalYear);
+    }
+
+    function displayYearData(data) {
+      const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                      'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+      
+      console.log('Displaying year data, months with data:', Object.keys(data));
+      
+      // Display month status cards
+      const statusHtml = months.map(month => {
+        const hasData = data[month] ? true : false;
+        const cardClass = hasData ? 'bg-green-100 border-green-500' : 'bg-yellow-100 border-yellow-500';
+        const icon = hasData ? 'fa-check-circle text-green-600' : 'fa-exclamation-circle text-yellow-600';
+        const statusText = hasData ? 'บันทึกแล้ว' : 'ยังไม่ได้บันทึก';
+        
+        return `
+          <div class="border-2 ${cardClass} rounded-lg p-4 text-center transition hover:shadow-lg">
+            <i class="fas ${icon} text-3xl mb-2"></i>
+            <h4 class="font-bold text-gray-800">${month}</h4>
+            <p class="text-sm mt-1">${statusText}</p>
+            ${hasData ? `<p class="text-xs text-gray-600 mt-1">ID: ${data[month].id}</p>` : ''}
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('monthStatus').innerHTML = statusHtml;
+      
+      // Display detailed table
+      const tableHtml = months.map(month => {
+        const hasData = data[month] ? true : false;
+        const monthData = data[month];
+        
+        const badge = hasData 
+          ? '<span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold"><i class="fas fa-check mr-1"></i>มีข้อมูล</span>' 
+          : '<span class="inline-block bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold"><i class="fas fa-times mr-1"></i>ยังไม่มีข้อมูล</span>';
+        
+        const timestamp = hasData && monthData.timestamp 
+          ? new Date(monthData.timestamp).toLocaleString('th-TH', { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          : '-';
+        
+        const actions = hasData 
+          ? `
+            <button onclick="editData('${month}')" 
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mr-2 transition">
+              <i class="fas fa-edit mr-1"></i>แก้ไข
+            </button>
+            <button onclick="viewDetails('${month}')" 
+              class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg mr-2 transition">
+              <i class="fas fa-eye mr-1"></i>ดูรายละเอียด
+            </button>
+            <button onclick="deleteData('${month}')" 
+              class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
+              <i class="fas fa-trash mr-1"></i>ลบ
+            </button>
+          `
+          : `<span class="text-gray-400">-</span>`;
+        
+        return `
+          <tr class="border-b hover:bg-gray-50 transition">
+            <td class="px-4 py-3 font-semibold">${month}</td>
+            <td class="px-4 py-3">${badge}</td>
+            <td class="px-4 py-3 text-sm text-gray-600">${timestamp}</td>
+            <td class="px-4 py-3 text-center">${actions}</td>
+          </tr>
+        `;
+      }).join('');
+      
+      document.getElementById('dataTableBody').innerHTML = tableHtml;
+      
+      // Store data globally for other functions to access
+      window.currentYearData = data;
+    }
+    
+    function viewDetails(month) {
+      if (!window.currentYearData || !window.currentYearData[month]) {
+        showAlert('ไม่พบข้อมูลสำหรับเดือนนี้', 'error');
+        return;
+      }
+      
+      const data = window.currentYearData[month];
+      
+      let detailsHtml = `
+        <div class="space-y-4">
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <h4 class="font-bold text-lg mb-2"><i class="fas fa-info-circle mr-2"></i>ข้อมูลทั่วไป</h4>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div><strong>แผนก:</strong> ${data.departmentName}</div>
+              <div><strong>เดือน:</strong> ${data.month}</div>
+              <div><strong>ปีงบประมาณ:</strong> ${data.fiscalYear}</div>
+              <div><strong>ID:</strong> ${data.id}</div>
+              <div class="col-span-2"><strong>บันทึกเมื่อ:</strong> ${new Date(data.timestamp).toLocaleString('th-TH')}</div>
+            </div>
+          </div>
+          
+          <div class="bg-purple-50 p-4 rounded-lg">
+            <h4 class="font-bold text-lg mb-2"><i class="fas fa-chart-line mr-2"></i>ตัวชี้วัดสำคัญ</h4>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div><strong>Pressure Ulcer Rate:</strong> ${data.pressureUlcerRate || 'N/A'}%</div>
+              <div><strong>Readmission Rate:</strong> ${data.readmissionRate || 'N/A'}%</div>
+              <div><strong>Average LOS:</strong> ${data.averageLOS || 'N/A'} วัน</div>
+              <div><strong>Productivity:</strong> ${data.productivity || 'N/A'}%</div>
+              <div><strong>Pain Total:</strong> ${data.painTotal || 'N/A'}</div>
+              <div><strong>Record Completeness:</strong> ${data.recordCompleteness || 'N/A'}%</div>
+            </div>
+          </div>
+          
+          ${data.note ? `
+          <div class="bg-yellow-50 p-4 rounded-lg">
+            <h4 class="font-bold text-lg mb-2"><i class="fas fa-sticky-note mr-2"></i>หมายเหตุ</h4>
+            <p class="text-sm">${data.note}</p>
+          </div>
+          ` : ''}
+        </div>
+      `;
+      
+      // Show in a modal
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+      modal.innerHTML = `
+        <div class="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-2xl font-bold text-gray-800">รายละเอียดข้อมูล - ${month}</h3>
+            <button onclick="this.closest('.fixed').remove()" 
+              class="text-gray-500 hover:text-gray-700 text-2xl">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          ${detailsHtml}
+          <div class="mt-6 text-center">
+            <button onclick="this.closest('.fixed').remove()" 
+              class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+              <i class="fas fa-times mr-2"></i>ปิด
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function editData(month) {
+      // Try to use cached data first
+      if (window.currentYearData && window.currentYearData[month]) {
+        console.log('Using cached data for', month);
+        showEditModal(month, window.currentYearData[month]);
+        return;
+      }
+      
+      // If no cache, fetch from server
+      console.log('Fetching data for', month);
+      showLoading();
+      const fiscalYear = document.getElementById('viewFiscalYear').value;
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          if (data) {
+            console.log('Fetched data:', data);
+            showEditModal(month, data);
+          } else {
+            showAlert('ไม่พบข้อมูลสำหรับเดือนนี้', 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showAlert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message, 'error');
+          console.error('Error fetching data:', error);
+        })
+        .getQAData(currentUser.id, fiscalYear, month);
+    }
+
+    function showEditModal(month, data) {
+      document.getElementById('editModalTitle').textContent = `แก้ไขข้อมูลเดือน ${month}`;
+      currentEditId = data.id;
+      
+      // Generate full edit form with all fields
+      let fieldsHtml = '<div class="space-y-6">';
+      
+      // Section 1
+      fieldsHtml += '<div class="border-l-4 border-purple-500 pl-4">';
+      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 1: Patient Safety</h4>';
+      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+      for (let i = 1; i <= 10; i++) {
+        fieldsHtml += `<div><label class="text-xs text-gray-600">s1_${i}</label>`;
+        fieldsHtml += `<input type="number" name="s1_${i}" value="${data['s1_' + i] || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      }
+      fieldsHtml += '</div></div>';
+      
+      // Section 1.6 (Pressure Ulcer)
+      fieldsHtml += '<div class="border-l-4 border-blue-500 pl-4">';
+      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 1.6: Pressure Ulcer</h4>';
+      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+      for (let i = 1; i <= 4; i++) {
+        fieldsHtml += `<div><label class="text-xs text-gray-600">s1_6_${i}</label>`;
+        fieldsHtml += `<input type="number" name="s1_6_${i}" value="${data['s1_6_' + i] || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      }
+      fieldsHtml += '</div></div>';
+      
+      // Section 2
+      fieldsHtml += '<div class="border-l-4 border-green-500 pl-4">';
+      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 2: Readmission Rate</h4>';
+      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+      for (let i = 1; i <= 2; i++) {
+        fieldsHtml += `<div><label class="text-xs text-gray-600">s2_${i}</label>`;
+        fieldsHtml += `<input type="number" name="s2_${i}" value="${data['s2_' + i] || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      }
+      fieldsHtml += '</div></div>';
+      
+      // Section 3
+      fieldsHtml += '<div class="border-l-4 border-yellow-500 pl-4">';
+      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 3: Average LOS</h4>';
+      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+      fieldsHtml += `<div><label class="text-xs text-gray-600">s3_1</label>`;
+      fieldsHtml += `<input type="number" name="s3_1" value="${data.s3_1 || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      fieldsHtml += '</div></div>';
+      
+      // Section 4
+      fieldsHtml += '<div class="border-l-4 border-red-500 pl-4">';
+      fieldsHtml += '<h4 class="font-bold text-gray-800 mb-3">Section 4: Productivity</h4>';
+      fieldsHtml += '<div class="grid grid-cols-1 md:grid-cols-3 gap-3">';
+      fieldsHtml += `<div><label class="text-xs text-gray-600">s4_a</label>`;
+      fieldsHtml += `<input type="number" name="s4_a" value="${data.s4_a || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      fieldsHtml += `<div><label class="text-xs text-gray-600">s4_b</label>`;
+      fieldsHtml += `<input type="number" name="s4_b" value="${data.s4_b || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      fieldsHtml += `<div><label class="text-xs text-gray-600">s4_c</label>`;
+      fieldsHtml += `<input type="number" name="s4_c" value="${data.s4_c || ''}" step="0.01" class="input-field w-full px-3 py-2 border rounded"></div>`;
+      fieldsHtml += '</div></div>';
+      
+      // Remaining sections (simplified)
+      fieldsHtml += '<div class="p-4 bg-blue-50 rounded">';
+      fieldsHtml += '<p class="text-sm text-gray-700"><i class="fas fa-info-circle mr-2"></i>สามารถแก้ไขข้อมูลหลักได้ที่นี่ สำหรับข้อมูลเพิ่มเติม กรุณาไปที่ Tab "บันทึกข้อมูล"</p>';
+      fieldsHtml += '</div>';
+      
+      // Note
+      fieldsHtml += '<div><label class="text-sm font-semibold text-gray-700">หมายเหตุ</label>';
+      fieldsHtml += `<textarea name="note" rows="2" class="input-field w-full px-3 py-2 border rounded">${data.note || ''}</textarea></div>`;
+      
+      fieldsHtml += '</div>';
+      
+      document.getElementById('editFormFields').innerHTML = fieldsHtml;
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+      currentEditId = null;
+    }
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      updateData();
+    });
+
+    function updateData() {
+      showLoading();
+      closeEditModal();
+      
+      const formData = new FormData(document.getElementById('editForm'));
+      const data = {
+        id: currentEditId,
+        departmentId: currentUser.id,
+        departmentName: currentUser.name,
+        fiscalYear: document.getElementById('viewFiscalYear').value
+      };
+      
+      // Collect all form data
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          hideLoading();
+          if (response.success) {
+            showAlert('อัพเดทข้อมูลสำเร็จ!', 'success');
+            loadYearData();
+          } else {
+            showAlert('เกิดข้อผิดพลาด: ' + response.message, 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showAlert('เกิดข้อผิดพลาดในการอัพเดทข้อมูล', 'error');
+          console.error(error);
+        })
+        .updateQAData(data);
+    }
+
+    function deleteData(month) {
+      if (!confirm(`คุณต้องการลบข้อมูลเดือน ${month} ใช่หรือไม่?\n\nการลบนี้ไม่สามารถย้อนกลับได้!`)) {
+        return;
+      }
+      
+      showLoading();
+      const fiscalYear = document.getElementById('viewFiscalYear').value;
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          hideLoading();
+          if (response.success) {
+            showAlert('ลบข้อมูลสำเร็จ!', 'success');
+            loadYearData();
+          } else {
+            showAlert('เกิดข้อผิดพลาด: ' + response.message, 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showAlert('เกิดข้อผิดพลาดในการลบข้อมูล', 'error');
+        })
+        .deleteQAData(currentUser.id, fiscalYear, month);
+    }
+
+    // Utility functions
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+
+    function showAlert(message, type) {
+      const alertDiv = document.getElementById('alertMessage');
+      const alertClass = type === 'success' ? 'alert-success' : 
+                        type === 'warning' ? 'alert-warning' : 'alert-error';
+      const icon = type === 'success' ? 'fa-check-circle' : 
+                  type === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle';
+      
+      alertDiv.className = `${alertClass} p-4 rounded-lg mb-4`;
+      alertDiv.innerHTML = `
+        <i class="fas ${icon} mr-2"></i>
+        <span>${message}</span>
+      `;
+      alertDiv.classList.remove('hidden');
+      
+      setTimeout(() => {
+        alertDiv.classList.add('hidden');
+      }, 5000);
+      
+      // Scroll to alert
+      alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ==================== ADMIN FUNCTIONS ====================
+    
+    function adminLogout() {
+      if (confirm('ต้องการออกจากระบบใช่หรือไม่?')) {
+        document.getElementById('adminScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+        switchLoginMode('user');
+      }
+    }
+
+    function showAdminTab(tab) {
+      // Hide all tabs
+      document.getElementById('overviewContent').classList.add('hidden');
+      document.getElementById('departmentContent').classList.add('hidden');
+      document.getElementById('alertsContent').classList.add('hidden');
+      
+      // Reset all tab buttons
+      const tabs = ['overviewTab', 'departmentTab', 'alertsTab'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(t);
+        btn.className = 'tab-btn px-6 py-3 font-semibold transition bg-transparent text-gray-700 hover:bg-gray-100';
+      });
+      
+      // Show selected tab and highlight button
+      if (tab === 'overview') {
+        document.getElementById('overviewContent').classList.remove('hidden');
+        document.getElementById('overviewTab').className = 'tab-btn px-6 py-3 font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+      } else if (tab === 'department') {
+        document.getElementById('departmentContent').classList.remove('hidden');
+        document.getElementById('departmentTab').className = 'tab-btn px-6 py-3 font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+      } else if (tab === 'alerts') {
+        document.getElementById('alertsContent').classList.remove('hidden');
+        document.getElementById('alertsTab').className = 'tab-btn px-6 py-3 font-semibold transition bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+      }
+    }
+
+    function loadAdminData() {
+      showLoading();
+      const fiscalYear = document.getElementById('adminFiscalYear').value;
+      
+      console.log('Loading admin data for year:', fiscalYear);
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          console.log('Admin data received:', data);
+          displayAdminData(data);
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message);
+          console.error(error);
+        })
+        .getAllDepartmentsData(fiscalYear);
+    }
+
+    function displayAdminData(data) {
+      const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                      'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+      
+      // Calculate statistics
+      let totalDepts = departments.length;
+      let completeDepts = 0;
+      let incompleteDepts = 0;
+      let emptyDepts = 0;
+      let totalEntries = 0;
+      let alerts = [];
+
+      departments.forEach(dept => {
+        const deptData = data[dept.id] || {};
+        let monthCount = 0;
+        
+        months.forEach(month => {
+          if (deptData[month]) {
+            monthCount++;
+            totalEntries++;
+          } else {
+            alerts.push({
+              dept: dept.name,
+              month: month
+            });
+          }
+        });
+        
+        if (monthCount === 12) {
+          completeDepts++;
+        } else if (monthCount === 0) {
+          emptyDepts++;
+        } else {
+          incompleteDepts++;
+        }
+      });
+
+      // Update stats
+      document.getElementById('totalDepts').textContent = totalDepts;
+      document.getElementById('completeDepts').textContent = completeDepts;
+      document.getElementById('incompleteDepts').textContent = incompleteDepts;
+      document.getElementById('emptyDepts').textContent = emptyDepts;
+      
+      // Calculate overall progress
+      const maxEntries = totalDepts * 12;
+      const overallPercent = ((totalEntries / maxEntries) * 100).toFixed(1);
+      document.getElementById('overallProgress').style.width = overallPercent + '%';
+      document.getElementById('overallProgress').textContent = overallPercent + '%';
+      document.getElementById('overallPercentText').textContent = overallPercent + '%';
+
+      // Update alert badge
+      document.getElementById('alertBadge').textContent = alerts.length;
+
+      // Display department grid
+      displayDepartmentGrid(data);
+
+      // Display alerts
+      displayAlerts(alerts);
+    }
+
+    function displayDepartmentGrid(data) {
+      const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                      'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+      const grid = document.getElementById('deptGrid');
+      let html = '';
+      
+      departments.forEach(dept => {
+        const deptData = data[dept.id] || {};
+        let monthCount = 0;
+        
+        months.forEach(month => {
+          if (deptData[month]) monthCount++;
+        });
+        
+        let cardClass = '';
+        let icon = '';
+        let statusText = '';
+        
+        if (monthCount === 12) {
+          cardClass = 'bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500';
+          icon = 'fa-check-circle text-green-600';
+          statusText = 'ครบ 12 เดือน';
+        } else if (monthCount === 0) {
+          cardClass = 'bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-500';
+          icon = 'fa-times-circle text-red-600';
+          statusText = 'ยังไม่มีข้อมูล';
+        } else {
+          cardClass = 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-500';
+          icon = 'fa-exclamation-circle text-yellow-600';
+          statusText = `มี ${monthCount}/12 เดือน`;
+        }
+        
+        html += `
+          <div class="${cardClass} rounded-lg p-4 hover:shadow-lg transition cursor-pointer" onclick="viewDeptDetailInAdmin('${dept.id}')">
+            <div class="flex items-start justify-between mb-2">
+              <i class="fas ${icon} text-2xl"></i>
+              <span class="text-xs font-semibold text-gray-600">${dept.id}</span>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm mb-2">${dept.name}</h4>
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold">${statusText}</span>
+              <div class="w-10 h-10 rounded-full border-4 ${monthCount === 12 ? 'border-green-600' : monthCount === 0 ? 'border-red-600' : 'border-yellow-600'} flex items-center justify-center font-bold">
+                ${monthCount}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      grid.innerHTML = html;
+    }
+
+    function displayAlerts(alerts) {
+      const list = document.getElementById('alertsList');
+      
+      if (alerts.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-check-circle text-6xl mb-4 text-green-500"></i>
+            <p class="text-lg font-semibold">ไม่มีรายการแจ้งเตือน</p>
+            <p class="text-sm">ข้อมูลครบถ้วนทุกแผนก</p>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '<div class="space-y-3">';
+      let displayedAlerts = alerts.slice(0, 50); // Show first 50 alerts
+      
+      displayedAlerts.forEach(alert => {
+        html += `
+          <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-bell text-yellow-600 text-xl"></i>
+                <div>
+                  <p class="font-semibold text-gray-800">${alert.dept}</p>
+                  <p class="text-sm text-gray-600">ยังไม่ได้บันทึกข้อมูลเดือน ${alert.month}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      if (alerts.length > 50) {
+        html += `
+          <div class="text-center p-4 bg-gray-100 rounded-lg">
+            <p class="text-sm text-gray-600">และอีก ${alerts.length - 50} รายการ</p>
+          </div>
+        `;
+      }
+      
+      html += '</div>';
+      list.innerHTML = html;
+    }
+
+    function viewDeptDetailInAdmin(deptId) {
+      document.getElementById('selectedDept').value = deptId;
+      showAdminTab('department');
+      loadDeptData();
+    }
+
+    function loadDeptData() {
+      const deptId = document.getElementById('selectedDept').value;
+      if (!deptId) {
+        document.getElementById('deptDataDisplay').innerHTML = `
+          <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-search text-6xl mb-4 opacity-50"></i>
+            <p class="text-lg">กรุณาเลือกแผนกเพื่อดูข้อมูล</p>
+          </div>
+        `;
+        return;
+      }
+      
+      showLoading();
+      const fiscalYear = document.getElementById('deptFiscalYear').value;
+      const dept = departments.find(d => d.id === deptId);
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          displayDeptData(dept, data);
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        })
+        .getYearData(deptId, fiscalYear);
+    }
+
+    function displayDeptData(dept, data) {
+      const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                      'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+      
+      let html = `
+        <div class="card bg-white rounded-xl p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">${dept.name}</h3>
+              <p class="text-sm text-gray-600">รหัสแผนก: ${dept.id}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-gray-600">ปีงบประมาณ</p>
+              <p class="text-2xl font-bold text-purple-600">${document.getElementById('deptFiscalYear').value}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-6">
+      `;
+      
+      months.forEach(month => {
+        const hasData = data[month] ? true : false;
+        const cardClass = hasData ? 'border-2 border-green-500 bg-green-50' : 'border-2 border-gray-300 bg-gray-50';
+        const icon = hasData ? 'fa-check text-green-600' : 'fa-times text-gray-400';
+        const badge = hasData ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600';
+        const badgeText = hasData ? 'มีข้อมูล' : 'ไม่มีข้อมูล';
+        
+        html += `
+          <div class="card ${cardClass} rounded-lg p-4 text-center">
+            <i class="fas ${icon} text-2xl mb-2"></i>
+            <p class="font-semibold text-gray-800 mb-2">${month}</p>
+            <span class="inline-block ${badge} px-2 py-1 rounded-full text-xs font-semibold">
+              ${badgeText}
+            </span>
+          </div>
+        `;
+      });
+      
+      html += `
+        </div>
+        
+        <div class="card bg-white rounded-xl p-6">
+          <h4 class="text-xl font-bold text-gray-800 mb-4">รายละเอียดข้อมูลรายเดือน</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+                <tr>
+                  <th class="px-4 py-3 text-left">เดือน</th>
+                  <th class="px-4 py-3 text-left">สถานะ</th>
+                  <th class="px-4 py-3 text-left">วันที่บันทึก</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      months.forEach(month => {
+        const monthData = data[month];
+        const hasData = monthData ? true : false;
+        const badge = hasData 
+          ? '<span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold"><i class="fas fa-check mr-1"></i>มีข้อมูล</span>' 
+          : '<span class="inline-block bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-sm font-semibold"><i class="fas fa-times mr-1"></i>ยังไม่มีข้อมูล</span>';
+        const date = hasData ? new Date(monthData.timestamp).toLocaleDateString('th-TH') : '-';
+        
+        html += `
+          <tr class="border-b hover:bg-gray-50">
+            <td class="px-4 py-3 font-semibold">${month}</td>
+            <td class="px-4 py-3">${badge}</td>
+            <td class="px-4 py-3 text-sm text-gray-600">${date}</td>
+          </tr>
+        `;
+      });
+      
+      html += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('deptDataDisplay').innerHTML = html;
+    }
+
+    // Populate department select for admin
+    function populateAdminDepartmentSelect() {
+      const select = document.getElementById('selectedDept');
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept.id;
+        option.textContent = dept.name;
+        select.appendChild(option);
+      });
+    }
+
+    // ==================== END ADMIN FUNCTIONS ====================
+
+    // Event listeners for month change
+    document.getElementById('month').addEventListener('change', updateDaysInMonth);
+    document.getElementById('fiscalYear').addEventListener('change', updateDaysInMonth);
+
+    // Initialize admin dropdown
+    populateAdminDepartmentSelect();
+  </script>
+</body>
+</html>

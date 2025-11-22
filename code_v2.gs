@@ -1,0 +1,711 @@
+/**
+ * ระบบบันทึกข้อมูล QA โรงพยาบาลหนองบัวลำภู
+ * Google Apps Script Backend - Version 2.0
+ * รองรับข้อมูลตามโครงสร้างใหม่
+ */
+
+// Spreadsheet ID
+const SPREADSHEET_ID = '1bwfAc9P3WNbpu0N76pRTTt2MrNE8UsrBd7ln9mklWws';
+
+/**
+ * แสดงหน้าเว็บ
+ */
+function doGet(e) {
+  const page = e.parameter.page || 'user';
+  
+  if (page === 'admin') {
+    return HtmlService.createHtmlOutputFromFile('admin')
+      .setTitle('Admin Dashboard - QA System')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } else {
+    return HtmlService.createHtmlOutputFromFile('index_v2')
+      .setTitle('ระบบบันทึกข้อมูล QA - โรงพยาบาลหนองบัวลำภู')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
+}
+
+/**
+ * ตรวจสอบและสร้าง Sheet ถ้ายังไม่มี
+ */
+function initializeSheet() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName('QAData_V2');
+  
+  if (!sheet) {
+    sheet = ss.insertSheet('QAData_V2');
+    
+    // สร้าง Headers
+    const headers = [
+      'ID', 'แผนก ID', 'ชื่อแผนก', 'ปีงบประมาณ', 'เดือน', 'วันที่บันทึก',
+      
+      // Section 1: Patient Safety (14 fields)
+      's1_1', 's1_2', 's1_3', 's1_4', 's1_5',
+      's1_6_1', 's1_6_2', 's1_6_3', 's1_6_4', 'pressureUlcerRate',
+      's1_7', 's1_8', 's1_9', 's1_10',
+      
+      // Section 2: Readmission Rate (3 fields)
+      's2_1', 's2_2', 'readmissionRate',
+      
+      // Section 3: Average Length of Stay (3 fields)
+      's3_1', 'daysInMonth', 'averageLOS',
+      
+      // Section 4: Productivity (9 fields)
+      's4_a', 's4_b', 's4_c', 
+      'rnHr', 'auxHr', 'ratioRnAux', 'actualHPPD', 'productivity',
+      
+      // Section 5: On-call & Unplanned (3 fields)
+      's5_1', 's6_1', 's6_2',
+      
+      // Section 6: CPR (3 fields)
+      's7_1', 's7_2', 's7_3',
+      
+      // Section 7: SOS Scores (5 fields)
+      's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
+      
+      // Section 8: Pain Management (10 fields)
+      's9_1_1', 's9_1_2', 'painTotal',
+      's9_2_1', 's9_2_2', 's9_2_3',
+      's9_3_1', 's9_3_2', 'recordCompleteness',
+      
+      'หมายเหตุ'
+    ];
+    
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#667eea');
+    sheet.getRange(1, 1, 1, headers.length).setFontColor('#ffffff');
+    sheet.setFrozenRows(1);
+    
+    // Auto-resize columns
+    for (let i = 1; i <= headers.length; i++) {
+      sheet.autoResizeColumn(i);
+    }
+  }
+  
+  return sheet;
+}
+
+/**
+ * สร้าง ID สำหรับข้อมูลใหม่
+ */
+function generateId() {
+  return 'QA' + new Date().getTime();
+}
+
+/**
+ * บันทึกข้อมูล QA
+ */
+function saveQAData(data) {
+  try {
+    const sheet = initializeSheet();
+    
+    // ตรวจสอบว่ามีข้อมูลซ้ำหรือไม่
+    const existingData = sheet.getDataRange().getValues();
+    for (let i = 1; i < existingData.length; i++) {
+      if (existingData[i][1] === data.departmentId && 
+          existingData[i][3] === data.fiscalYear && 
+          existingData[i][4] === data.month) {
+        return updateExistingRow(sheet, i + 1, data);
+      }
+    }
+    
+    // เพิ่มข้อมูลใหม่
+    const newRow = [
+      generateId(),
+      data.departmentId,
+      data.departmentName,
+      data.fiscalYear,
+      data.month,
+      new Date(),
+      
+      // Section 1
+      data.s1_1 || '', data.s1_2 || '', data.s1_3 || '', data.s1_4 || '', data.s1_5 || '',
+      data.s1_6_1 || '', data.s1_6_2 || '', data.s1_6_3 || '', data.s1_6_4 || '', data.pressureUlcerRate || '',
+      data.s1_7 || '', data.s1_8 || '', data.s1_9 || '', data.s1_10 || '',
+      
+      // Section 2
+      data.s2_1 || '', data.s2_2 || '', data.readmissionRate || '',
+      
+      // Section 3
+      data.s3_1 || '', data.daysInMonth || '', data.averageLOS || '',
+      
+      // Section 4
+      data.s4_a || '', data.s4_b || '', data.s4_c || '',
+      data.rnHr || '', data.auxHr || '', data.ratioRnAux || '', data.actualHPPD || '', data.productivity || '',
+      
+      // Section 5
+      data.s5_1 || '', data.s6_1 || '', data.s6_2 || '',
+      
+      // Section 6
+      data.s7_1 || '', data.s7_2 || '', data.s7_3 || '',
+      
+      // Section 7
+      data.s8_1 || '', data.s8_2 || '', data.s8_3 || '', data.s8_4 || '', data.s8_5 || '',
+      
+      // Section 8
+      data.s9_1_1 || '', data.s9_1_2 || '', data.painTotal || '',
+      data.s9_2_1 || '', data.s9_2_2 || '', data.s9_2_3 || '',
+      data.s9_3_1 || '', data.s9_3_2 || '', data.recordCompleteness || '',
+      
+      data.note || ''
+    ];
+    
+    sheet.appendRow(newRow);
+    
+    return { success: true, message: 'บันทึกข้อมูลสำเร็จ' };
+  } catch (error) {
+    Logger.log('Error in saveQAData: ' + error.toString());
+    return { success: false, message: error.toString() };
+  }
+}
+
+/**
+ * อัพเดทข้อมูลที่มีอยู่แล้ว
+ */
+function updateExistingRow(sheet, rowIndex, data) {
+  try {
+    // อัพเดทวันที่
+    sheet.getRange(rowIndex, 6).setValue(new Date());
+    
+    // อัพเดทข้อมูล
+    let colIndex = 7;
+    
+    // Section 1 (14 fields)
+    const section1 = [
+      data.s1_1, data.s1_2, data.s1_3, data.s1_4, data.s1_5,
+      data.s1_6_1, data.s1_6_2, data.s1_6_3, data.s1_6_4, data.pressureUlcerRate,
+      data.s1_7, data.s1_8, data.s1_9, data.s1_10
+    ];
+    section1.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 2 (3 fields)
+    const section2 = [data.s2_1, data.s2_2, data.readmissionRate];
+    section2.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 3 (3 fields)
+    const section3 = [data.s3_1, data.daysInMonth, data.averageLOS];
+    section3.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 4 (8 fields)
+    const section4 = [
+      data.s4_a, data.s4_b, data.s4_c,
+      data.rnHr, data.auxHr, data.ratioRnAux, data.actualHPPD, data.productivity
+    ];
+    section4.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 5 (3 fields)
+    const section5 = [data.s5_1, data.s6_1, data.s6_2];
+    section5.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 6 (3 fields)
+    const section6 = [data.s7_1, data.s7_2, data.s7_3];
+    section6.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 7 (5 fields)
+    const section7 = [data.s8_1, data.s8_2, data.s8_3, data.s8_4, data.s8_5];
+    section7.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Section 8 (9 fields)
+    const section8 = [
+      data.s9_1_1, data.s9_1_2, data.painTotal,
+      data.s9_2_1, data.s9_2_2, data.s9_2_3,
+      data.s9_3_1, data.s9_3_2, data.recordCompleteness
+    ];
+    section8.forEach(val => {
+      sheet.getRange(rowIndex, colIndex++).setValue(val || '');
+    });
+    
+    // Note
+    sheet.getRange(rowIndex, colIndex).setValue(data.note || '');
+    
+    return { success: true, message: 'อัพเดทข้อมูลสำเร็จ' };
+  } catch (error) {
+    Logger.log('Error in updateExistingRow: ' + error.toString());
+    return { success: false, message: error.toString() };
+  }
+}
+
+/**
+ * ดึงข้อมูล QA ตามแผนก ปี และเดือน
+ */
+function getQAData(departmentId, fiscalYear, month) {
+  try {
+    const sheet = initializeSheet();
+    const data = sheet.getDataRange().getValues();
+    
+    // Trim input parameters
+    const deptIdStr = String(departmentId).trim();
+    const fiscalYearStr = String(fiscalYear).trim();
+    const monthStr = String(month).trim();
+    
+    Logger.log('getQAData - Looking for: dept="' + deptIdStr + '", year="' + fiscalYearStr + '", month="' + monthStr + '"');
+    
+    for (let i = 1; i < data.length; i++) {
+      const rowDeptId = String(data[i][1]).trim();
+      const rowFiscalYear = String(data[i][3]).trim();
+      const rowMonth = String(data[i][4]).trim();
+      
+      if (rowDeptId === deptIdStr && 
+          rowFiscalYear === fiscalYearStr && 
+          rowMonth === monthStr) {
+        
+        Logger.log('getQAData - Found match at row ' + i);
+        
+        const result = {
+          id: data[i][0],
+          departmentId: rowDeptId,
+          departmentName: String(data[i][2]).trim(),
+          fiscalYear: rowFiscalYear,
+          month: rowMonth,
+          timestamp: data[i][5],
+          
+          // Section 1
+          s1_1: data[i][6], s1_2: data[i][7], s1_3: data[i][8], s1_4: data[i][9], s1_5: data[i][10],
+          s1_6_1: data[i][11], s1_6_2: data[i][12], s1_6_3: data[i][13], s1_6_4: data[i][14], 
+          pressureUlcerRate: data[i][15],
+          s1_7: data[i][16], s1_8: data[i][17], s1_9: data[i][18], s1_10: data[i][19],
+          
+          // Section 2
+          s2_1: data[i][20], s2_2: data[i][21], readmissionRate: data[i][22],
+          
+          // Section 3
+          s3_1: data[i][23], daysInMonth: data[i][24], averageLOS: data[i][25],
+          
+          // Section 4
+          s4_a: data[i][26], s4_b: data[i][27], s4_c: data[i][28],
+          rnHr: data[i][29], auxHr: data[i][30], ratioRnAux: data[i][31], 
+          actualHPPD: data[i][32], productivity: data[i][33],
+          
+          // Section 5
+          s5_1: data[i][34], s6_1: data[i][35], s6_2: data[i][36],
+          
+          // Section 6
+          s7_1: data[i][37], s7_2: data[i][38], s7_3: data[i][39],
+          
+          // Section 7
+          s8_1: data[i][40], s8_2: data[i][41], s8_3: data[i][42], s8_4: data[i][43], s8_5: data[i][44],
+          
+          // Section 8
+          s9_1_1: data[i][45], s9_1_2: data[i][46], painTotal: data[i][47],
+          s9_2_1: data[i][48], s9_2_2: data[i][49], s9_2_3: data[i][50],
+          s9_3_1: data[i][51], s9_3_2: data[i][52], recordCompleteness: data[i][53],
+          
+          note: data[i][54]
+        };
+        
+        return result;
+      }
+    }
+    
+    Logger.log('getQAData - No match found');
+    return null;
+  } catch (error) {
+    Logger.log('Error in getQAData: ' + error.toString());
+    return null;
+  }
+}
+
+/**
+ * ดึงข้อมูลทั้งปี
+ */
+function getYearData(departmentId, fiscalYear) {
+  try {
+    const sheet = initializeSheet();
+    const data = sheet.getDataRange().getValues();
+    
+    const result = {};
+    
+    // Convert fiscalYear to string and trim
+    const fiscalYearStr = String(fiscalYear).trim();
+    const deptIdStr = String(departmentId).trim();
+    
+    Logger.log('========== getYearData START ==========');
+    Logger.log('Looking for Department ID: "' + deptIdStr + '"');
+    Logger.log('Looking for Fiscal Year: "' + fiscalYearStr + '"');
+    Logger.log('Total rows in sheet: ' + (data.length - 1));
+    
+    let foundCount = 0;
+    
+    for (let i = 1; i < data.length; i++) {
+      // Get values and trim them
+      const rowDeptId = String(data[i][1]).trim();
+      const rowFiscalYear = String(data[i][3]).trim();
+      const rowMonth = String(data[i][4]).trim();
+      
+      // Debug first 3 rows
+      if (i <= 3) {
+        Logger.log('Row ' + i + ' - DeptID: "' + rowDeptId + '", Year: "' + rowFiscalYear + '", Month: "' + rowMonth + '"');
+      }
+      
+      // Compare with trimmed values
+      if (rowDeptId === deptIdStr && rowFiscalYear === fiscalYearStr) {
+        foundCount++;
+        
+        Logger.log('✓ FOUND Match at row ' + i + ': Month = "' + rowMonth + '"');
+        
+        const monthData = {
+          id: data[i][0],
+          departmentId: rowDeptId,
+          departmentName: String(data[i][2]).trim(),
+          fiscalYear: rowFiscalYear,
+          month: rowMonth,
+          timestamp: data[i][5],
+          
+          // Section 1
+          s1_1: data[i][6], s1_2: data[i][7], s1_3: data[i][8], s1_4: data[i][9], s1_5: data[i][10],
+          s1_6_1: data[i][11], s1_6_2: data[i][12], s1_6_3: data[i][13], s1_6_4: data[i][14], 
+          pressureUlcerRate: data[i][15],
+          s1_7: data[i][16], s1_8: data[i][17], s1_9: data[i][18], s1_10: data[i][19],
+          
+          // Section 2
+          s2_1: data[i][20], s2_2: data[i][21], readmissionRate: data[i][22],
+          
+          // Section 3
+          s3_1: data[i][23], daysInMonth: data[i][24], averageLOS: data[i][25],
+          
+          // Section 4
+          s4_a: data[i][26], s4_b: data[i][27], s4_c: data[i][28],
+          rnHr: data[i][29], auxHr: data[i][30], ratioRnAux: data[i][31], 
+          actualHPPD: data[i][32], productivity: data[i][33],
+          
+          // Section 5
+          s5_1: data[i][34], s6_1: data[i][35], s6_2: data[i][36],
+          
+          // Section 6
+          s7_1: data[i][37], s7_2: data[i][38], s7_3: data[i][39],
+          
+          // Section 7
+          s8_1: data[i][40], s8_2: data[i][41], s8_3: data[i][42], s8_4: data[i][43], s8_5: data[i][44],
+          
+          // Section 8
+          s9_1_1: data[i][45], s9_1_2: data[i][46], painTotal: data[i][47],
+          s9_2_1: data[i][48], s9_2_2: data[i][49], s9_2_3: data[i][50],
+          s9_3_1: data[i][51], s9_3_2: data[i][52], recordCompleteness: data[i][53],
+          
+          note: data[i][54]
+        };
+        
+        result[rowMonth] = monthData;
+      }
+    }
+    
+    Logger.log('========== getYearData RESULT ==========');
+    Logger.log('Found ' + foundCount + ' months of data');
+    Logger.log('Months: ' + Object.keys(result).join(', '));
+    Logger.log('========================================');
+    
+    return result;
+  } catch (error) {
+    Logger.log('ERROR in getYearData: ' + error.toString());
+    Logger.log('Stack trace: ' + error.stack);
+    return {};
+  }
+}
+
+/**
+ * อัพเดทข้อมูล QA
+ */
+function updateQAData(data) {
+  try {
+    const sheet = initializeSheet();
+    const sheetData = sheet.getDataRange().getValues();
+    
+    for (let i = 1; i < sheetData.length; i++) {
+      if (sheetData[i][0] === data.id) {
+        return updateExistingRow(sheet, i + 1, data);
+      }
+    }
+    
+    return { success: false, message: 'ไม่พบข้อมูลที่ต้องการอัพเดท' };
+  } catch (error) {
+    Logger.log('Error in updateQAData: ' + error.toString());
+    return { success: false, message: error.toString() };
+  }
+}
+
+/**
+ * ลบข้อมูล QA
+ */
+function deleteQAData(departmentId, fiscalYear, month) {
+  try {
+    const sheet = initializeSheet();
+    const data = sheet.getDataRange().getValues();
+    
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][1] === departmentId && 
+          data[i][3] === fiscalYear && 
+          data[i][4] === month) {
+        sheet.deleteRow(i + 1);
+        return { success: true, message: 'ลบข้อมูลสำเร็จ' };
+      }
+    }
+    
+    return { success: false, message: 'ไม่พบข้อมูลที่ต้องการลบ' };
+  } catch (error) {
+    Logger.log('Error in deleteQAData: ' + error.toString());
+    return { success: false, message: error.toString() };
+  }
+}
+
+/**
+ * ดึงข้อมูลสรุปทั้งหมด (สำหรับ Admin)
+ */
+function getAllData(fiscalYear) {
+  try {
+    const sheet = initializeSheet();
+    const data = sheet.getDataRange().getValues();
+    const result = [];
+    
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][3] === fiscalYear) {
+        const rowData = {
+          id: data[i][0],
+          departmentId: data[i][1],
+          departmentName: data[i][2],
+          fiscalYear: data[i][3],
+          month: data[i][4],
+          timestamp: data[i][5]
+        };
+        
+        // Add all fields
+        for (let j = 6; j < data[i].length; j++) {
+          rowData['field_' + j] = data[i][j];
+        }
+        
+        result.push(rowData);
+      }
+    }
+    
+    return result;
+  } catch (error) {
+    Logger.log('Error in getAllData: ' + error.toString());
+    return [];
+  }
+}
+
+/**
+ * สร้างรายงานสรุป
+ */
+function generateSummaryReport(departmentId, fiscalYear) {
+  try {
+    const yearData = getYearData(departmentId, fiscalYear);
+    const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                    'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+    
+    const summary = {
+      totalMonths: 12,
+      completedMonths: 0,
+      pendingMonths: [],
+      completedMonthsList: [],
+      completionRate: 0
+    };
+    
+    months.forEach(month => {
+      if (yearData[month]) {
+        summary.completedMonths++;
+        summary.completedMonthsList.push(month);
+      } else {
+        summary.pendingMonths.push(month);
+      }
+    });
+    
+    summary.completionRate = ((summary.completedMonths / summary.totalMonths) * 100).toFixed(2);
+    
+    return summary;
+  } catch (error) {
+    Logger.log('Error in generateSummaryReport: ' + error.toString());
+    return null;
+  }
+}
+
+/**
+ * ส่งออกข้อมูลเป็น CSV
+ */
+function exportToCSV(departmentId, fiscalYear) {
+  try {
+    const yearData = getYearData(departmentId, fiscalYear);
+    const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                    'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+    
+    let csv = 'เดือน,';
+    
+    // Add headers
+    const headers = [
+      's1_1', 's1_2', 's1_3', 's1_4', 's1_5',
+      's1_6_1', 's1_6_2', 's1_6_3', 's1_6_4', 'pressureUlcerRate',
+      's1_7', 's1_8', 's1_9', 's1_10',
+      's2_1', 's2_2', 'readmissionRate',
+      's3_1', 'averageLOS',
+      's4_a', 's4_b', 's4_c', 'productivity',
+      's5_1', 's6_1', 's6_2',
+      's7_1', 's7_2', 's7_3',
+      's8_1', 's8_2', 's8_3', 's8_4', 's8_5',
+      's9_1_1', 's9_1_2', 'painTotal',
+      's9_2_1', 's9_2_2', 's9_2_3',
+      's9_3_1', 's9_3_2', 'recordCompleteness',
+      'หมายเหตุ'
+    ];
+    
+    csv += headers.join(',') + '\n';
+    
+    // Add data
+    months.forEach(month => {
+      csv += month + ',';
+      const data = yearData[month];
+      
+      if (data) {
+        headers.forEach(header => {
+          csv += (data[header] || '') + ',';
+        });
+        csv += '\n';
+      } else {
+        csv += headers.map(() => '').join(',') + '\n';
+      }
+    });
+    
+    return csv;
+  } catch (error) {
+    Logger.log('Error in exportToCSV: ' + error.toString());
+    return '';
+  }
+}
+
+/**
+ * ดึงข้อมูลทุกแผนกสำหรับ Admin Dashboard
+ */
+function getAllDepartmentsData(fiscalYear) {
+  try {
+    const sheet = initializeSheet();
+    const data = sheet.getDataRange().getValues();
+    
+    const result = {};
+    const fiscalYearStr = String(fiscalYear).trim();
+    
+    Logger.log('getAllDepartmentsData - Looking for year: "' + fiscalYearStr + '"');
+    
+    // Loop through all data rows
+    for (let i = 1; i < data.length; i++) {
+      const rowFiscalYear = String(data[i][3]).trim();
+      
+      if (rowFiscalYear === fiscalYearStr) {
+        const departmentId = String(data[i][1]).trim();
+        const month = String(data[i][4]).trim();
+        
+        if (!result[departmentId]) {
+          result[departmentId] = {};
+        }
+        
+        const monthData = {
+          id: data[i][0],
+          departmentId: departmentId,
+          departmentName: String(data[i][2]).trim(),
+          fiscalYear: rowFiscalYear,
+          month: month,
+          timestamp: data[i][5]
+        };
+        
+        // Add all field data (simplified - can add more if needed)
+        for (let j = 6; j < data[i].length; j++) {
+          monthData['field_' + j] = data[i][j];
+        }
+        
+        result[departmentId][month] = monthData;
+      }
+    }
+    
+    Logger.log('getAllDepartmentsData - Found data for ' + Object.keys(result).length + ' departments');
+    
+    return result;
+  } catch (error) {
+    Logger.log('Error in getAllDepartmentsData: ' + error.toString());
+    return {};
+  }
+}
+
+/**
+ * ดึงสถิติสรุปสำหรับ Admin
+ */
+function getAdminStatistics(fiscalYear) {
+  try {
+    const sheet = initializeSheet();
+    const data = sheet.getDataRange().getValues();
+    
+    const departments = [
+      "DEPT001", "DEPT002", "DEPT003", "DEPT004", "DEPT005", "DEPT006",
+      "DEPT007", "DEPT008", "DEPT009", "DEPT010", "DEPT011", "DEPT012",
+      "DEPT013", "DEPT014", "DEPT015", "DEPT016", "DEPT017", "DEPT018",
+      "DEPT019", "DEPT020", "DEPT021"
+    ];
+    
+    const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                    'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+    
+    const stats = {
+      totalDepartments: departments.length,
+      completeDepartments: 0,
+      incompleteDepartments: 0,
+      emptyDepartments: 0,
+      totalEntries: 0,
+      expectedEntries: departments.length * months.length,
+      monthlyBreakdown: {},
+      departmentBreakdown: {}
+    };
+    
+    // Initialize monthly breakdown
+    months.forEach(month => {
+      stats.monthlyBreakdown[month] = 0;
+    });
+    
+    // Count entries
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][3] === fiscalYear) {
+        stats.totalEntries++;
+        const month = data[i][4];
+        if (stats.monthlyBreakdown[month] !== undefined) {
+          stats.monthlyBreakdown[month]++;
+        }
+      }
+    }
+    
+    // Calculate department completion
+    departments.forEach(deptId => {
+      let monthCount = 0;
+      for (let i = 1; i < data.length; i++) {
+        if (data[i][1] === deptId && data[i][3] === fiscalYear) {
+          monthCount++;
+        }
+      }
+      
+      stats.departmentBreakdown[deptId] = monthCount;
+      
+      if (monthCount === 12) {
+        stats.completeDepartments++;
+      } else if (monthCount === 0) {
+        stats.emptyDepartments++;
+      } else {
+        stats.incompleteDepartments++;
+      }
+    });
+    
+    stats.completionPercentage = ((stats.totalEntries / stats.expectedEntries) * 100).toFixed(2);
+    
+    return stats;
+  } catch (error) {
+    Logger.log('Error in getAdminStatistics: ' + error.toString());
+    return null;
+  }
+}

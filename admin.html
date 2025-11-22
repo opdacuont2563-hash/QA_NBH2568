@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - QA System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .alert-card {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .dept-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dept-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+      transform: scale(1.02);
+    }
+
+    .dept-complete {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border-color: #10b981;
+    }
+
+    .dept-incomplete {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-color: #f59e0b;
+    }
+
+    .dept-empty {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      border-color: #ef4444;
+    }
+
+    .progress-bar {
+      height: 24px;
+      background: #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .tab-btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .tab-active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .tab-inactive {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .tab-inactive:hover {
+      background: #e5e7eb;
+    }
+
+    .loading {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .month-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-complete {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-incomplete {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  
+  <!-- Login Screen -->
+  <div id="adminLoginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div class="text-center mb-8">
+        <div class="bg-gradient-to-r from-purple-500 to-indigo-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-user-shield text-white text-4xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
+        <p class="text-gray-600">ระบบจัดการข้อมูล QA</p>
+        <p class="text-sm text-gray-500 mt-1">โรงพยาบาลหนองบัวลำภู</p>
+      </div>
+
+      <form id="adminLoginForm" class="space-y-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            <i class="fas fa-user mr-2"></i>Username
+          </label>
+          <input type="text" id="adminUsername" required
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+            placeholder="admin">
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            <i class="fas fa-lock mr-2"></i>Password
+          </label>
+          <input type="password" id="adminPassword" required
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none transition"
+            placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-lg text-white font-semibold gradient-bg hover:shadow-lg transition">
+          <i class="fas fa-sign-in-alt mr-2"></i>เข้าสู่ระบบ Admin
+        </button>
+      </form>
+
+      <div id="adminLoginError" class="hidden mt-4 p-3 bg-red-100 text-red-800 rounded-lg">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <span id="adminLoginErrorMsg"></span>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a href="/" class="text-sm text-gray-600 hover:text-purple-600 transition">
+          <i class="fas fa-arrow-left mr-2"></i>กลับไปหน้าผู้ใช้งาน
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <div id="adminDashboard" class="hidden min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+              <i class="fas fa-user-shield text-2xl"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+              <p class="text-purple-100 text-sm">ระบบจัดการและติดตามข้อมูล QA</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="text-right">
+              <p class="text-sm opacity-90">ผู้ดูแลระบบ</p>
+              <p class="font-semibold">Admin</p>
+            </div>
+            <button onclick="adminLogout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+              <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="bg-white shadow-md sticky top-16 z-40">
+      <div class="container mx-auto px-4">
+        <div class="flex space-x-2">
+          <button onclick="showAdminTab('overview')" id="overviewTab" 
+            class="tab-btn tab-active">
+            <i class="fas fa-chart-pie mr-2"></i>ภาพรวม
+          </button>
+          <button onclick="showAdminTab('department')" id="departmentTab" 
+            class="tab-btn tab-inactive">
+            <i class="fas fa-building mr-2"></i>รายแผนก
+          </button>
+          <button onclick="showAdminTab('alerts')" id="alertsTab" 
+            class="tab-btn tab-inactive">
+            <i class="fas fa-bell mr-2"></i>แจ้งเตือน
+            <span id="alertBadge" class="ml-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container mx-auto px-4 py-8">
+      
+      <!-- Overview Tab -->
+      <div id="overviewContent">
+        <!-- Year Selection -->
+        <div class="card mb-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-800">
+              <i class="fas fa-calendar-alt mr-2 text-purple-600"></i>เลือกปีงบประมาณ
+            </h2>
+            <div class="flex items-center space-x-4">
+              <select id="adminFiscalYear" onchange="loadAdminData()" 
+                class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="2568">2568</option>
+                <option value="2569">2569</option>
+                <option value="2570">2570</option>
+                <option value="2571">2571</option>
+                <option value="2572">2572</option>
+              </select>
+              <button onclick="loadAdminData()" 
+                class="gradient-bg text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transition">
+                <i class="fas fa-sync-alt mr-2"></i>โหลดข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-2">
+              <i class="fas fa-building text-3xl opacity-80"></i>
+              <div class="text-right">
+                <p class="text-sm opacity-90">จำนวนแผนกทั้งหมด</p>
+                <p class="text-4xl font-bold" id="totalDepts">21</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-2 border-green-500">
+            <div class="flex items-center justify-between mb-2">
+              <i class="fas fa-check-circle text-3xl text-green-600"></i>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">ครบถ้วน 12 เดือน</p>
+                <p class="text-4xl font-bold text-green-600" id="completeDepts">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-2 border-yellow-500">
+            <div class="flex items-center justify-between mb-2">
+              <i class="fas fa-exclamation-triangle text-3xl text-yellow-600"></i>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">ข้อมูลไม่ครบ</p>
+                <p class="text-4xl font-bold text-yellow-600" id="incompleteDepts">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-2 border-red-500">
+            <div class="flex items-center justify-between mb-2">
+              <i class="fas fa-times-circle text-3xl text-red-600"></i>
+              <div class="text-right">
+                <p class="text-sm text-gray-600">ยังไม่มีข้อมูล</p>
+                <p class="text-4xl font-bold text-red-600" id="emptyDepts">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overall Progress -->
+        <div class="card mb-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-chart-bar mr-2 text-purple-600"></i>ความสมบูรณ์ของข้อมูลโดยรวม
+          </h3>
+          <div class="mb-4">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+              <span>ความสมบูรณ์ทั้งหมด</span>
+              <span id="overallPercentText">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="overallProgress" style="width: 0%">0%</div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-600">
+            <i class="fas fa-info-circle mr-2"></i>
+            คำนวณจาก: จำนวนข้อมูลที่มี / (21 แผนก × 12 เดือน) × 100
+          </p>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <!-- Completion Chart -->
+          <div class="card">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">
+              <i class="fas fa-pie-chart mr-2 text-purple-600"></i>สัดส่วนความสมบูรณ์
+            </h3>
+            <canvas id="completionChart" height="300"></canvas>
+          </div>
+
+          <!-- Monthly Chart -->
+          <div class="card">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">
+              <i class="fas fa-chart-line mr-2 text-purple-600"></i>จำนวนแผนกที่บันทึกรายเดือน
+            </h3>
+            <canvas id="monthlyChart" height="300"></canvas>
+          </div>
+        </div>
+
+        <!-- Department Grid -->
+        <div class="card">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-th-large mr-2 text-purple-600"></i>สถานะแต่ละแผนก
+          </h3>
+          <div id="deptGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Will be populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Department Tab -->
+      <div id="departmentContent" class="hidden">
+        <div class="card mb-6">
+          <div class="flex items-center space-x-4 mb-6">
+            <div class="flex-1">
+              <label class="block text-gray-700 font-semibold mb-2">เลือกแผนก</label>
+              <select id="selectedDept" onchange="loadDeptData()" 
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="">-- เลือกแผนก --</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="block text-gray-700 font-semibold mb-2">ปีงบประมาณ</label>
+              <select id="deptFiscalYear" onchange="loadDeptData()" 
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                <option value="2568">2568</option>
+                <option value="2569">2569</option>
+                <option value="2570">2570</option>
+                <option value="2571">2571</option>
+                <option value="2572">2572</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="loadDeptData()" 
+                class="gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition">
+                <i class="fas fa-search mr-2"></i>ดูข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Department Data Display -->
+        <div id="deptDataDisplay">
+          <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-search text-6xl mb-4 opacity-50"></i>
+            <p class="text-lg">กรุณาเลือกแผนกเพื่อดูข้อมูล</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Tab -->
+      <div id="alertsContent" class="hidden">
+        <div class="card mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-bell mr-2 text-yellow-600"></i>รายการแจ้งเตือน
+          </h2>
+          <div id="alertsList">
+            <!-- Will be populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="adminLoadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-8 text-center">
+      <div class="loading mx-auto mb-4"></div>
+      <p class="text-gray-700 font-semibold">กำลังโหลดข้อมูล...</p>
+    </div>
+  </div>
+
+  <script>
+    // Admin credentials
+    const ADMIN_CREDENTIALS = {
+      username: 'admin',
+      password: 'admin@nbl2568'
+    };
+
+    // Department list
+    const departments = [
+      { id: "DEPT001", name: "หอผู้ป่วยอายุรกรรมชาย" },
+      { id: "DEPT002", name: "หอผู้ป่วยอายุรกรรมหญิง" },
+      { id: "DEPT003", name: "หอผู้ป่วยจิตเวช" },
+      { id: "DEPT004", name: "หอผู้ป่วยพิเศษรวมน้ำใจ" },
+      { id: "DEPT005", name: "หอผู้ป่วยศัลยกรรมชาย" },
+      { id: "DEPT006", name: "หอผู้ป่วยศัลยกรรมหญิง" },
+      { id: "DEPT007", name: "หอผู้ป่วยหนักอายุรกรรมชั้น 1(ICU-MED_1)" },
+      { id: "DEPT008", name: "หอผู้ป่วยหนักอายุรกรรมชั้น 2(ICU-MED_2)" },
+      { id: "DEPT009", name: "หอผู้ป่วยกระดูกและข้อ" },
+      { id: "DEPT010", name: "หอผู้ป่วยพิเศษอายุรกรรมชั้น4" },
+      { id: "DEPT011", name: "หอผู้ป่วยพิเศษศัลยกรรมชั้น4" },
+      { id: "DEPT012", name: "หอผู้ป่วยกุมารเวช" },
+      { id: "DEPT013", name: "หอผู้ป่วยอภิบาลสงฆ์" },
+      { id: "DEPT014", name: "หอผู้ป่วยโสต ศอ นาสิก" },
+      { id: "DEPT015", name: "หอผู้ป่วยพิเศษสูติ-นรีเวช ชั้น5" },
+      { id: "DEPT016", name: "หอผู้ป่วยพิเศษสูติ-นรีเวช ชั้น4" },
+      { id: "DEPT017", name: "หอผู้ป่วยพิเศษกุมารเวช" },
+      { id: "DEPT018", name: "หอผู้ป่วยศัลยกรรมระบบประสาทและสมอง" },
+      { id: "DEPT019", name: "หอผู้ป่วยหนักกุมารเวช(NICU)" },
+      { id: "DEPT020", name: "หอผู้ป่วยสูติ-นรีเวช (PP)" },
+      { id: "DEPT021", name: "หอผู้ป่วยหนักรวม(ICU_รวม)" }
+    ];
+
+    const months = ['ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 
+                    'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน'];
+
+    let completionChart = null;
+    let monthlyChart = null;
+
+    // Initialize
+    window.onload = function() {
+      populateDepartmentSelects();
+    };
+
+    function populateDepartmentSelects() {
+      const select = document.getElementById('selectedDept');
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept.id;
+        option.textContent = dept.name;
+        select.appendChild(option);
+      });
+    }
+
+    // Admin Login
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+      
+      if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+        document.getElementById('adminLoginScreen').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        loadAdminData();
+      } else {
+        showAdminLoginError('Username หรือ Password ไม่ถูกต้อง');
+      }
+    });
+
+    function showAdminLoginError(message) {
+      const errorDiv = document.getElementById('adminLoginError');
+      const errorMsg = document.getElementById('adminLoginErrorMsg');
+      errorMsg.textContent = message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => errorDiv.classList.add('hidden'), 3000);
+    }
+
+    function adminLogout() {
+      if (confirm('ต้องการออกจากระบบใช่หรือไม่?')) {
+        document.getElementById('adminLoginScreen').classList.remove('hidden');
+        document.getElementById('adminDashboard').classList.add('hidden');
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+      }
+    }
+
+    // Tab switching
+    function showAdminTab(tab) {
+      // Hide all tabs
+      document.getElementById('overviewContent').classList.add('hidden');
+      document.getElementById('departmentContent').classList.add('hidden');
+      document.getElementById('alertsContent').classList.add('hidden');
+      
+      // Remove active class from all buttons
+      document.getElementById('overviewTab').classList.remove('tab-active');
+      document.getElementById('overviewTab').classList.add('tab-inactive');
+      document.getElementById('departmentTab').classList.remove('tab-active');
+      document.getElementById('departmentTab').classList.add('tab-inactive');
+      document.getElementById('alertsTab').classList.remove('tab-active');
+      document.getElementById('alertsTab').classList.add('tab-inactive');
+      
+      // Show selected tab
+      if (tab === 'overview') {
+        document.getElementById('overviewContent').classList.remove('hidden');
+        document.getElementById('overviewTab').classList.add('tab-active');
+        document.getElementById('overviewTab').classList.remove('tab-inactive');
+      } else if (tab === 'department') {
+        document.getElementById('departmentContent').classList.remove('hidden');
+        document.getElementById('departmentTab').classList.add('tab-active');
+        document.getElementById('departmentTab').classList.remove('tab-inactive');
+      } else if (tab === 'alerts') {
+        document.getElementById('alertsContent').classList.remove('hidden');
+        document.getElementById('alertsTab').classList.add('tab-active');
+        document.getElementById('alertsTab').classList.remove('tab-inactive');
+      }
+    }
+
+    // Load admin data
+    function loadAdminData() {
+      showAdminLoading();
+      const fiscalYear = document.getElementById('adminFiscalYear').value;
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideAdminLoading();
+          displayAdminData(data);
+        })
+        .withFailureHandler(function(error) {
+          hideAdminLoading();
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+          console.error(error);
+        })
+        .getAllDepartmentsData(fiscalYear);
+    }
+
+    function displayAdminData(data) {
+      // Calculate statistics
+      let totalDepts = departments.length;
+      let completeDepts = 0;
+      let incompleteDepts = 0;
+      let emptyDepts = 0;
+      let totalEntries = 0;
+      let monthlyData = new Array(12).fill(0);
+      let alerts = [];
+
+      departments.forEach(dept => {
+        const deptData = data[dept.id] || {};
+        let monthCount = 0;
+        
+        months.forEach((month, index) => {
+          if (deptData[month]) {
+            monthCount++;
+            monthlyData[index]++;
+            totalEntries++;
+          } else {
+            alerts.push({
+              dept: dept.name,
+              month: month,
+              severity: 'warning'
+            });
+          }
+        });
+        
+        if (monthCount === 12) {
+          completeDepts++;
+        } else if (monthCount === 0) {
+          emptyDepts++;
+        } else {
+          incompleteDepts++;
+        }
+      });
+
+      // Update stats
+      document.getElementById('totalDepts').textContent = totalDepts;
+      document.getElementById('completeDepts').textContent = completeDepts;
+      document.getElementById('incompleteDepts').textContent = incompleteDepts;
+      document.getElementById('emptyDepts').textContent = emptyDepts;
+      
+      // Calculate overall progress
+      const maxEntries = totalDepts * 12;
+      const overallPercent = ((totalEntries / maxEntries) * 100).toFixed(1);
+      document.getElementById('overallProgress').style.width = overallPercent + '%';
+      document.getElementById('overallProgress').textContent = overallPercent + '%';
+      document.getElementById('overallPercentText').textContent = overallPercent + '%';
+
+      // Update alert badge
+      document.getElementById('alertBadge').textContent = alerts.length;
+
+      // Display charts
+      displayCompletionChart(completeDepts, incompleteDepts, emptyDepts);
+      displayMonthlyChart(monthlyData);
+
+      // Display department grid
+      displayDepartmentGrid(data);
+
+      // Display alerts
+      displayAlerts(alerts);
+    }
+
+    function displayCompletionChart(complete, incomplete, empty) {
+      const ctx = document.getElementById('completionChart');
+      
+      if (completionChart) {
+        completionChart.destroy();
+      }
+      
+      completionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['ครบถ้วน 12 เดือน', 'ข้อมูลไม่ครบ', 'ยังไม่มีข้อมูล'],
+          datasets: [{
+            data: [complete, incomplete, empty],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  family: 'Sarabun',
+                  size: 14
+                },
+                padding: 15
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function displayMonthlyChart(data) {
+      const ctx = document.getElementById('monthlyChart');
+      
+      if (monthlyChart) {
+        monthlyChart.destroy();
+      }
+      
+      monthlyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'จำนวนแผนกที่บันทึกข้อมูล',
+            data: data,
+            backgroundColor: 'rgba(102, 126, 234, 0.8)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 21,
+              ticks: {
+                font: {
+                  family: 'Sarabun'
+                }
+              }
+            },
+            x: {
+              ticks: {
+                font: {
+                  family: 'Sarabun'
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    function displayDepartmentGrid(data) {
+      const grid = document.getElementById('deptGrid');
+      let html = '';
+      
+      departments.forEach(dept => {
+        const deptData = data[dept.id] || {};
+        let monthCount = 0;
+        
+        months.forEach(month => {
+          if (deptData[month]) monthCount++;
+        });
+        
+        let cardClass = '';
+        let icon = '';
+        let statusText = '';
+        
+        if (monthCount === 12) {
+          cardClass = 'dept-complete';
+          icon = 'fa-check-circle text-green-600';
+          statusText = 'ครบ 12 เดือน';
+        } else if (monthCount === 0) {
+          cardClass = 'dept-empty';
+          icon = 'fa-times-circle text-red-600';
+          statusText = 'ยังไม่มีข้อมูล';
+        } else {
+          cardClass = 'dept-incomplete';
+          icon = 'fa-exclamation-circle text-yellow-600';
+          statusText = `มี ${monthCount}/12 เดือน`;
+        }
+        
+        html += `
+          <div class="dept-card ${cardClass}" onclick="viewDeptDetail('${dept.id}')">
+            <div class="flex items-start justify-between mb-2">
+              <i class="fas ${icon} text-2xl"></i>
+              <span class="text-xs font-semibold">${dept.id}</span>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm mb-2">${dept.name}</h4>
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold">${statusText}</span>
+              <div class="w-12 h-12 rounded-full border-4 ${monthCount === 12 ? 'border-green-600' : monthCount === 0 ? 'border-red-600' : 'border-yellow-600'} flex items-center justify-center font-bold">
+                ${monthCount}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      grid.innerHTML = html;
+    }
+
+    function displayAlerts(alerts) {
+      const list = document.getElementById('alertsList');
+      
+      if (alerts.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-check-circle text-6xl mb-4 text-green-500"></i>
+            <p class="text-lg font-semibold">ไม่มีรายการแจ้งเตือน</p>
+            <p class="text-sm">ข้อมูลครบถ้วนทุกแผนก</p>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '<div class="space-y-3">';
+      alerts.forEach((alert, index) => {
+        html += `
+          <div class="alert-card">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-bell text-2xl"></i>
+                <div>
+                  <p class="font-semibold">${alert.dept}</p>
+                  <p class="text-sm opacity-90">ยังไม่ได้บันทึกข้อมูลเดือน ${alert.month}</p>
+                </div>
+              </div>
+              <button onclick="notifyDepartment('${alert.dept}', '${alert.month}')" 
+                class="bg-white text-yellow-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-50 transition">
+                <i class="fas fa-paper-plane mr-2"></i>แจ้งเตือน
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      list.innerHTML = html;
+    }
+
+    function viewDeptDetail(deptId) {
+      document.getElementById('selectedDept').value = deptId;
+      showAdminTab('department');
+      loadDeptData();
+    }
+
+    function loadDeptData() {
+      const deptId = document.getElementById('selectedDept').value;
+      if (!deptId) {
+        document.getElementById('deptDataDisplay').innerHTML = `
+          <div class="text-center py-12 text-gray-500">
+            <i class="fas fa-search text-6xl mb-4 opacity-50"></i>
+            <p class="text-lg">กรุณาเลือกแผนกเพื่อดูข้อมูล</p>
+          </div>
+        `;
+        return;
+      }
+      
+      showAdminLoading();
+      const fiscalYear = document.getElementById('deptFiscalYear').value;
+      const dept = departments.find(d => d.id === deptId);
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideAdminLoading();
+          displayDeptData(dept, data);
+        })
+        .withFailureHandler(function(error) {
+          hideAdminLoading();
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        })
+        .getYearData(deptId, fiscalYear);
+    }
+
+    function displayDeptData(dept, data) {
+      let html = `
+        <div class="card mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">${dept.name}</h3>
+              <p class="text-sm text-gray-600">รหัสแผนก: ${dept.id}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-gray-600">ปีงบประมาณ</p>
+              <p class="text-2xl font-bold text-purple-600">${document.getElementById('deptFiscalYear').value}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-6">
+      `;
+      
+      months.forEach(month => {
+        const hasData = data[month] ? true : false;
+        const badgeClass = hasData ? 'badge-complete' : 'badge-incomplete';
+        const icon = hasData ? 'fa-check' : 'fa-times';
+        
+        html += `
+          <div class="card text-center ${hasData ? 'border-2 border-green-500' : 'border-2 border-gray-300'}">
+            <i class="fas ${icon} text-2xl ${hasData ? 'text-green-600' : 'text-gray-400'} mb-2"></i>
+            <p class="font-semibold text-gray-800">${month}</p>
+            <span class="month-badge ${badgeClass} mt-2">
+              ${hasData ? 'มีข้อมูล' : 'ไม่มีข้อมูล'}
+            </span>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      
+      // Detailed data table
+      html += `
+        <div class="card">
+          <h4 class="text-xl font-bold text-gray-800 mb-4">รายละเอียดข้อมูลรายเดือน</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="gradient-bg text-white">
+                <tr>
+                  <th class="px-4 py-3 text-left">เดือน</th>
+                  <th class="px-4 py-3 text-left">สถานะ</th>
+                  <th class="px-4 py-3 text-left">วันที่บันทึก</th>
+                  <th class="px-4 py-3 text-center">การดำเนินการ</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      months.forEach(month => {
+        const monthData = data[month];
+        const hasData = monthData ? true : false;
+        const badge = hasData 
+          ? '<span class="badge-complete">มีข้อมูล</span>' 
+          : '<span class="badge-incomplete">ยังไม่มีข้อมูล</span>';
+        const date = hasData ? new Date(monthData.timestamp).toLocaleDateString('th-TH') : '-';
+        const action = hasData 
+          ? `<button onclick="viewMonthDetail('${dept.id}', '${month}')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+              <i class="fas fa-eye mr-1"></i>ดูรายละเอียด
+            </button>`
+          : `<span class="text-gray-400">-</span>`;
+        
+        html += `
+          <tr class="border-b hover:bg-gray-50">
+            <td class="px-4 py-3 font-semibold">${month}</td>
+            <td class="px-4 py-3">${badge}</td>
+            <td class="px-4 py-3 text-sm text-gray-600">${date}</td>
+            <td class="px-4 py-3 text-center">${action}</td>
+          </tr>
+        `;
+      });
+      
+      html += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('deptDataDisplay').innerHTML = html;
+    }
+
+    function viewMonthDetail(deptId, month) {
+      alert(`ดูรายละเอียดข้อมูลเดือน ${month} ของแผนก ${deptId}\n\nฟีเจอร์นี้สามารถพัฒนาต่อได้ตามต้องการ`);
+    }
+
+    function notifyDepartment(dept, month) {
+      if (confirm(`ต้องการส่งการแจ้งเตือนไปยัง ${dept} เพื่อบันทึกข้อมูลเดือน ${month} ใช่หรือไม่?`)) {
+        alert('ส่งการแจ้งเตือนสำเร็จ!\n\n(ฟีเจอร์นี้สามารถเชื่อมต่อกับระบบส่ง Email หรือ LINE Notify ได้)');
+      }
+    }
+
+    function showAdminLoading() {
+      document.getElementById('adminLoadingOverlay').classList.remove('hidden');
+    }
+
+    function hideAdminLoading() {
+      document.getElementById('adminLoadingOverlay').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
