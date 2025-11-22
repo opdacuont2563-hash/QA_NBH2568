@@ -98,24 +98,33 @@ function generateId() {
 function saveQAData(data) {
   try {
     const sheet = initializeSheet();
-    
+
+    // Normalize key identifiers to avoid whitespace issues
+    const departmentId = String(data.departmentId || '').trim();
+    const fiscalYear = String(data.fiscalYear || '').trim();
+    const month = String(data.month || '').trim();
+
     // ตรวจสอบว่ามีข้อมูลซ้ำหรือไม่
     const existingData = sheet.getDataRange().getValues();
     for (let i = 1; i < existingData.length; i++) {
-      if (existingData[i][1] === data.departmentId && 
-          existingData[i][3] === data.fiscalYear && 
-          existingData[i][4] === data.month) {
+      const rowDeptId = String(existingData[i][1]).trim();
+      const rowFiscalYear = String(existingData[i][3]).trim();
+      const rowMonth = String(existingData[i][4]).trim();
+
+      if (rowDeptId === departmentId &&
+          rowFiscalYear === fiscalYear &&
+          rowMonth === month) {
         return updateExistingRow(sheet, i + 1, data);
       }
     }
-    
+
     // เพิ่มข้อมูลใหม่
     const newRow = [
       generateId(),
-      data.departmentId,
+      departmentId,
       data.departmentName,
-      data.fiscalYear,
-      data.month,
+      fiscalYear,
+      month,
       new Date(),
       
       // Section 1
@@ -444,11 +453,19 @@ function deleteQAData(departmentId, fiscalYear, month) {
   try {
     const sheet = initializeSheet();
     const data = sheet.getDataRange().getValues();
-    
+
+    const deptIdStr = String(departmentId || '').trim();
+    const fiscalYearStr = String(fiscalYear || '').trim();
+    const monthStr = String(month || '').trim();
+
     for (let i = 1; i < data.length; i++) {
-      if (data[i][1] === departmentId && 
-          data[i][3] === fiscalYear && 
-          data[i][4] === month) {
+      const rowDeptId = String(data[i][1]).trim();
+      const rowFiscalYear = String(data[i][3]).trim();
+      const rowMonth = String(data[i][4]).trim();
+
+      if (rowDeptId === deptIdStr &&
+          rowFiscalYear === fiscalYearStr &&
+          rowMonth === monthStr) {
         sheet.deleteRow(i + 1);
         return { success: true, message: 'ลบข้อมูลสำเร็จ' };
       }

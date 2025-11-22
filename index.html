@@ -1706,15 +1706,17 @@
     // View Tab Functions
     function loadYearData() {
       showLoading();
-      
-      const fiscalYear = document.getElementById('viewFiscalYear').value;
-      
+
+      const fiscalYear = document.getElementById('viewFiscalYear').value.trim();
+      const deptId = (currentUser?.id || '').trim();
+      const deptName = (currentUser?.name || '').trim();
+
       console.log('=== Loading Year Data ===');
       console.log('Current User:', currentUser);
-      console.log('Department ID:', currentUser.id);
-      console.log('Department Name:', currentUser.name);
+      console.log('Department ID (trimmed):', deptId);
+      console.log('Department Name (trimmed):', deptName);
       console.log('Fiscal Year:', fiscalYear);
-      
+
       google.script.run
         .withSuccessHandler(function(data) {
           hideLoading();
@@ -1742,7 +1744,7 @@
           console.error('Error:', error);
           showAlert('❌ เกิดข้อผิดพลาดในการโหลดข้อมูล\n\nError: ' + error.message, 'error');
         })
-        .getYearData(currentUser.id, fiscalYear);
+        .getYearData(deptId, fiscalYear);
     }
 
     function displayYearData(data) {
